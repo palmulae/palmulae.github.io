@@ -1,0 +1,7 @@
+<svg class="mark" viewBox="-16 0 152 110" aria-hidden="true" focusable="false">
+  <g class="oar" style="--a: -40deg"><line class="shaft" x1="60" y1="37" x2="60" y2="106"/><path class="blade-shape" d="M60 38C52 34 51 22 52 10Q52 5 57 5L63 5Q68 5 68 10C69 22 68 34 60 38Z"/></g>
+  <g class="oar" style="--a: -20deg"><line class="shaft" x1="60" y1="37" x2="60" y2="106"/><path class="blade-shape" d="M60 38C52 34 51 22 52 10Q52 5 57 5L63 5Q68 5 68 10C69 22 68 34 60 38Z"/></g>
+  <g class="oar" style="--a: 0deg"><line class="shaft" x1="60" y1="37" x2="60" y2="106"/><path class="blade-shape" d="M60 38C52 34 51 22 52 10Q52 5 57 5L63 5Q68 5 68 10C69 22 68 34 60 38Z"/></g>
+  <g class="oar" style="--a: 20deg"><line class="shaft" x1="60" y1="37" x2="60" y2="106"/><path class="blade-shape" d="M60 38C52 34 51 22 52 10Q52 5 57 5L63 5Q68 5 68 10C69 22 68 34 60 38Z"/></g>
+  <g class="oar" style="--a: 40deg"><line class="shaft" x1="60" y1="37" x2="60" y2="106"/><path class="blade-shape" d="M60 38C52 34 51 22 52 10Q52 5 57 5L63 5Q68 5 68 10C69 22 68 34 60 38Z"/></g>
+</svg>

@@ -1,0 +1,58 @@
+[
+  {
+    "slug": "example-app",
+    "name": "Example App",
+    "line": "One sentence on what the app does.",
+    "about": [
+      "A short paragraph on who it's for and what it does. This business is made up, to show how a page looks.",
+      "A second paragraph, if it needs one."
+    ],
+    "colors": ["navy", "gold"],
+    "status": "live",
+    "url": "https://example.com/",
+    "url_label": "Open Example App",
+    "links": [
+      { "label": "Get it on the App Store", "url": "https://example.com/app-store" }
+    ],
+    "privacy": {
+      "updated": "November 24, 2026",
+      "intro": "This policy explains what Example App collects when you use it, and why. It's sample text: each business writes its own.",
+      "collects": [
+        "Your email address, if you make an account.",
+        "Counts of which screens are opened, with no names attached."
+      ],
+      "uses": [
+        "To run the app and keep your account working.",
+        "To answer you when you write in."
+      ],
+      "shares": "Nothing is sold. Data goes only to the services that run the app, such as its host.",
+      "keeps": "Until you delete your account, then for up to 30 days in backups.",
+      "choices": [
+        "Ask for a copy of your data, or for it to be deleted, by writing to the address below."
+      ],
+      "extra": [
+        { "heading": "Children", "paragraphs": ["Example App isn't meant for children under 13."] }
+      ]
+    },
+    "terms": {
+      "updated": "November 24, 2026",
+      "paragraphs": [
+        "These are sample terms, to show how the page looks. Each business writes its own."
+      ],
+      "sections": [
+        { "heading": "Using the app", "paragraphs": ["Use Example App lawfully, and don't try to break it."] },
+        { "heading": "Changes", "paragraphs": ["These terms may change. The date above shows the latest version."] }
+      ]
+    }
+  },
+  {
+    "slug": "example-studio",
+    "name": "Example Studio",
+    "line": "One sentence on what the business does.",
+    "about": [
+      "A business that isn't open yet gets a page too, marked Coming soon. This one is made up as well."
+    ],
+    "colors": ["sage", "navy"],
+    "status": "soon"
+  }
+]

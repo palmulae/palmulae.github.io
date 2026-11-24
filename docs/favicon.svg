@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    .s { stroke: #132326; stroke-width: 2.4; stroke-linecap: round; fill: none; }
+    .b { fill: #132326; }
+    @media (prefers-color-scheme: dark) { .s { stroke: #E5ECE9; } .b { fill: #E5ECE9; } }
+  </style>
+  <g id="oar"><line class="s" x1="16" y1="14" x2="16" y2="29.5"/><path class="b" d="M16 15.5C12.6 14 12.2 9 12.4 4.8Q12.4 2.4 14.8 2.4L17.2 2.4Q19.6 2.4 19.6 4.8C19.8 9 19.4 14 16 15.5Z"/></g>
+  <use href="#oar" transform="rotate(-30 16 29.5)"/>
+  <use href="#oar" transform="rotate(30 16 29.5)"/>
+</svg>
