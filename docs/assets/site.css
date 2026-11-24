@@ -1,5 +1,5 @@
 /* Palmulae site styles.
-   Layout: the name set like a Latin lexicon entry under a boat whose oars all pull one way, then a rack of
+   Layout: the name set like a Latin lexicon entry under a Roman galley whose oars all pull one way, then a rack of
    business cards, each painted in its own blade colors like oars on a boathouse wall.
    Fonts are served from this site (assets/fonts), so visits reach no other company. */
 
@@ -155,21 +155,23 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
 /* Home: hero */
 .hero { display: grid; gap: 1.1rem; justify-items: start; }
 .hero .mark { margin-bottom: .4rem; }
-/* The mark: a boat seen from above, every oar finishing the same stroke. On load it takes one stroke. */
-.mark { width: clamp(11rem, 30vw, 15rem); height: auto; color: var(--ink); overflow: visible; }
-.mark .hull, .mark .blade-shape { fill: currentColor; }
-.mark .shaft { stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
-.scull { transform-box: fill-box; }
-.scull.t { transform-origin: 50% 100%; transform: rotate(-32deg); }
-.scull.b { transform-origin: 50% 0%; transform: rotate(32deg); }
+/* The mark: a Roman galley, ram forward and stern curled, its bank of oars pulling as one.
+   On load the oars take one stroke and the galley surges ahead. */
+.mark { --cut: var(--paper); width: clamp(12rem, 32vw, 16rem); height: auto; color: var(--ink); overflow: visible; }
+.mark .hull, .mark .palm { fill: currentColor; }
+.mark .trim { fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; }
+.mark .loom { stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+.mark .cut { fill: none; stroke: var(--cut); stroke-width: 1.1; }
+.mark .eye { fill: var(--cut); }
+.mark .shield { fill: none; stroke: currentColor; stroke-width: 1.4; }
+.mark .wave { fill: none; stroke: currentColor; stroke-width: 1; stroke-linecap: round; opacity: .4; }
+.oar { transform-box: fill-box; transform-origin: 50% 0%; transform: rotate(32deg); }
 @media (prefers-reduced-motion: no-preference) {
-  .scull.t { animation: stroke-t 1300ms cubic-bezier(.4, .1, .2, 1) 250ms both; }
-  .scull.b { animation: stroke-b 1300ms cubic-bezier(.4, .1, .2, 1) 250ms both; }
-  .boat { animation: surge 1700ms cubic-bezier(.3, .6, .2, 1) 250ms both; }
+  .oar { animation: pull 1300ms cubic-bezier(.4, .1, .2, 1) 250ms both; }
+  .ship { animation: surge 1700ms cubic-bezier(.3, .6, .2, 1) 250ms both; }
 }
-@keyframes stroke-t { from { transform: rotate(40deg); } }
-@keyframes stroke-b { from { transform: rotate(-40deg); } }
-@keyframes surge { from { transform: translateX(-14px); } }
+@keyframes pull { from { transform: rotate(-26deg); } }
+@keyframes surge { from { transform: translateX(-12px); } }
 
 .wordmark {
   margin: .25rem 0 0;

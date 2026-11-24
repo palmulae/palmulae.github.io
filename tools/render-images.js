@@ -33,8 +33,8 @@ const rack = [['navy', 'gold'], ['sage', 'navy'], ['maroon', 'white'], ['gold', 
 const ogHtml = page(`
 body { width: 1200px; height: 630px; overflow: hidden; }
 .card { position: relative; width: 1200px; height: 630px; padding: 64px 0 0 88px; }
-.card .mark { width: 230px; display: block; margin-left: -6px; }
-.name { margin-top: 18px; font-family: var(--font-display); font-weight: 500; font-size: 176px; line-height: .82; letter-spacing: -.015em; }
+.card .mark { width: 250px; display: block; margin-left: -10px; }
+.name { margin-top: 10px; font-family: var(--font-display); font-weight: 500; font-size: 176px; line-height: .82; letter-spacing: -.015em; }
 .entry { margin-top: 30px; display: flex; align-items: baseline; gap: 22px; color: var(--ink-soft); }
 .hw { font-family: var(--font-mono); font-size: 23px; letter-spacing: .08em; color: var(--ink); }
 .pos { font-family: var(--font-display); font-style: italic; font-size: 30px; }
@@ -55,8 +55,7 @@ body { width: 1200px; height: 630px; overflow: hidden; }
 
 const touchHtml = page(`
 body { width: 180px; height: 180px; overflow: hidden; background: var(--ink); display: grid; place-items: center; }
-body .mark { width: 148px; color: var(--paper); }
-body .mark .shaft { stroke-width: 3; }
+body .mark { --cut: var(--ink); width: 164px; color: var(--paper); margin-top: 6px; }
 `, mark);
 
 const iconHtml = size => `<!doctype html><html lang="en"><head><meta charset="utf-8"><style>

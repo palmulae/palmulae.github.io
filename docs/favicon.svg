@@ -1,13 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <style>
-    .s { stroke: #132326; stroke-width: 2.3; stroke-linecap: round; fill: none; }
     .f { fill: #132326; }
-    @media (prefers-color-scheme: dark) { .s { stroke: #F2F5F3; } .f { fill: #F2F5F3; } }
+    .s { fill: none; stroke: #132326; stroke-width: 1.35; stroke-linecap: round; }
+    @media (prefers-color-scheme: dark) { .f { fill: #F2F5F3; } .s { stroke: #F2F5F3; } }
   </style>
-  <path class="f" d="M1.5 16C9 14.2 23 14.2 30.5 16C23 17.8 9 17.8 1.5 16Z"/>
-  <defs><g id="t"><line class="s" x1="12" y1="15" x2="12" y2="6.5"/><path class="f" d="M12 7.6C9.9 6.9 9.7 4 9.8 2.4Q9.8 1.2 11 1.2L13 1.2Q14.2 1.2 14.2 2.4C14.3 4 14.1 6.9 12 7.6Z"/></g></defs>
-  <use href="#t" transform="rotate(-36 12 15)"/>
-  <use href="#t" transform="translate(9.5 0) rotate(-36 12 15)"/>
-  <use href="#t" transform="matrix(1 0 0 -1 0 32) rotate(-36 12 15)"/>
-  <use href="#t" transform="matrix(1 0 0 -1 9.5 32) rotate(-36 12 15)"/>
+  <path class="s" d="M9.4 19.6L5.2 27M13.1 19.8L8.9 27.2M16.8 19.8L12.6 27.2M20.5 19.8L16.3 27.2M24.2 19.6L20 27"/>
+  <path class="f" d="M6.8 15.6Q16 16.9 26.4 15.6C27 17 27 18.6 26.2 19.8Q16 21.4 8.8 20.4C6.8 19.9 5.8 18.2 5.3 16.6C4.5 14.2 3 12.3 2.5 10.2C2 8.2 3 6.2 4.9 6.5C6.2 6.7 6.3 8.3 5.3 8.5C4.7 8.6 4.4 9.4 4.9 10.6C5.5 12.2 6.2 13.8 6.8 15.6Z"/>
+  <path class="f" d="M25.6 17L31.4 18.5L25.6 20.2Z"/>
 </svg>
