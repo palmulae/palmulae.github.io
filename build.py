@@ -343,7 +343,7 @@ class Builder:
             examples = PREVIEW_EXAMPLES if any(b["slug"].startswith("example-") for b in self.businesses) else ""
             note = PREVIEW_NOTE.format(examples=esc(examples), og=esc(links.root + "assets/og-image.png"),
                                        alt=esc(site["og_image_alt"]))
-            banner = f'<div class="preview-note" role="note">{note}</div>'
+            banner = f'<div class="preview-note" role="note"><div>{note}</div></div>'
         robots = "index, follow" if indexable and not self.preview else "noindex, nofollow"
         doc = self.fill(
             "page",

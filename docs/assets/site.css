@@ -1,5 +1,5 @@
 /* Palmulae site styles.
-   Layout: the name set like a Latin lexicon entry under a fan of oars, then a rack of
+   Layout: the name set like a Latin lexicon entry under a boat whose oars all pull one way, then a rack of
    business cards, each painted in its own blade colors like oars on a boathouse wall.
    Fonts are served from this site (assets/fonts), so visits reach no other company. */
 
@@ -58,32 +58,32 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #0D1618;
-    --card: #132023;
-    --ink: #E5ECE9;
-    --ink-soft: #A2B3B0;
-    --rule: #263739;
-    --accent: #84C7B6;
-    --blade-navy: #7096C4;
-    --blade-sage: #9CC8B4;
-    --blade-maroon: #C86E7A;
-    --blade-gold: #D8B862;
-    --blade-white: #E5ECE9;
+    --paper: #101211;
+    --card: #181B1A;
+    --ink: #F2F5F3;
+    --ink-soft: #A3AAA7;
+    --rule: #2C302E;
+    --accent: #F2F5F3;
+    --blade-navy: #6F8FB6;
+    --blade-sage: #94BBA9;
+    --blade-maroon: #B8636F;
+    --blade-gold: #D2B15C;
+    --blade-white: #F2F5F3;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --paper: #0D1618;
-  --card: #132023;
-  --ink: #E5ECE9;
-  --ink-soft: #A2B3B0;
-  --rule: #263739;
-  --accent: #84C7B6;
-  --blade-navy: #7096C4;
-  --blade-sage: #9CC8B4;
-  --blade-maroon: #C86E7A;
-  --blade-gold: #D8B862;
-  --blade-white: #E5ECE9;
+  --paper: #101211;
+  --card: #181B1A;
+  --ink: #F2F5F3;
+  --ink-soft: #A3AAA7;
+  --rule: #2C302E;
+  --accent: #F2F5F3;
+  --blade-navy: #6F8FB6;
+  --blade-sage: #94BBA9;
+  --blade-maroon: #B8636F;
+  --blade-gold: #D2B15C;
+  --blade-white: #F2F5F3;
   color-scheme: dark;
 }
 
@@ -154,14 +154,22 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
 
 /* Home: hero */
 .hero { display: grid; gap: 1.1rem; justify-items: start; }
-.mark { width: clamp(5rem, 13vw, 7rem); height: auto; color: var(--ink); overflow: visible; }
-.mark .shaft { stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
-.mark .blade-shape { fill: currentColor; }
-.oar { transform-box: fill-box; transform-origin: 50% 100%; transform: rotate(var(--a)); }
+.hero .mark { margin-bottom: .4rem; }
+/* The mark: a boat seen from above, every oar finishing the same stroke. On load it takes one stroke. */
+.mark { width: clamp(11rem, 30vw, 15rem); height: auto; color: var(--ink); overflow: visible; }
+.mark .hull, .mark .blade-shape { fill: currentColor; }
+.mark .shaft { stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+.scull { transform-box: fill-box; }
+.scull.t { transform-origin: 50% 100%; transform: rotate(-32deg); }
+.scull.b { transform-origin: 50% 0%; transform: rotate(32deg); }
 @media (prefers-reduced-motion: no-preference) {
-  .oar { animation: fan 1100ms cubic-bezier(.2, .75, .25, 1) 200ms both; }
+  .scull.t { animation: stroke-t 1300ms cubic-bezier(.4, .1, .2, 1) 250ms both; }
+  .scull.b { animation: stroke-b 1300ms cubic-bezier(.4, .1, .2, 1) 250ms both; }
+  .boat { animation: surge 1700ms cubic-bezier(.3, .6, .2, 1) 250ms both; }
 }
-@keyframes fan { from { transform: rotate(0deg); } }
+@keyframes stroke-t { from { transform: rotate(40deg); } }
+@keyframes stroke-b { from { transform: rotate(-40deg); } }
+@keyframes surge { from { transform: translateX(-14px); } }
 
 .wordmark {
   margin: .25rem 0 0;
@@ -371,15 +379,16 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
   margin: 0 auto;
   padding: .9rem max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px));
 }
-.preview-note > * {
-  margin: 0;
+.preview-note > div {
+  display: grid;
+  gap: .55rem;
   padding: .6rem .85rem;
   border: 1px dashed var(--ink-soft);
+  border-radius: 3px;
   font-size: .875rem;
   line-height: 1.5;
   color: var(--ink-soft);
 }
-.preview-note > p { border-radius: 3px 3px 0 0; border-bottom: 0; }
-.preview-note > details { border-radius: 0 0 3px 3px; }
+.preview-note p, .preview-note details { margin: 0; }
 .preview-note summary { cursor: pointer; color: var(--accent); }
 .preview-note img { display: block; width: 100%; max-width: 40rem; height: auto; margin-top: .6rem; border: 1px solid var(--rule); }

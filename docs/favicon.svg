@@ -1,10 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <style>
-    .s { stroke: #132326; stroke-width: 2.4; stroke-linecap: round; fill: none; }
-    .b { fill: #132326; }
-    @media (prefers-color-scheme: dark) { .s { stroke: #E5ECE9; } .b { fill: #E5ECE9; } }
+    .s { stroke: #132326; stroke-width: 2.3; stroke-linecap: round; fill: none; }
+    .f { fill: #132326; }
+    @media (prefers-color-scheme: dark) { .s { stroke: #F2F5F3; } .f { fill: #F2F5F3; } }
   </style>
-  <g id="oar"><line class="s" x1="16" y1="14" x2="16" y2="29.5"/><path class="b" d="M16 15.5C12.6 14 12.2 9 12.4 4.8Q12.4 2.4 14.8 2.4L17.2 2.4Q19.6 2.4 19.6 4.8C19.8 9 19.4 14 16 15.5Z"/></g>
-  <use href="#oar" transform="rotate(-30 16 29.5)"/>
-  <use href="#oar" transform="rotate(30 16 29.5)"/>
+  <path class="f" d="M1.5 16C9 14.2 23 14.2 30.5 16C23 17.8 9 17.8 1.5 16Z"/>
+  <defs><g id="t"><line class="s" x1="12" y1="15" x2="12" y2="6.5"/><path class="f" d="M12 7.6C9.9 6.9 9.7 4 9.8 2.4Q9.8 1.2 11 1.2L13 1.2Q14.2 1.2 14.2 2.4C14.3 4 14.1 6.9 12 7.6Z"/></g></defs>
+  <use href="#t" transform="rotate(-36 12 15)"/>
+  <use href="#t" transform="translate(9.5 0) rotate(-36 12 15)"/>
+  <use href="#t" transform="matrix(1 0 0 -1 0 32) rotate(-36 12 15)"/>
+  <use href="#t" transform="matrix(1 0 0 -1 9.5 32) rotate(-36 12 15)"/>
 </svg>
