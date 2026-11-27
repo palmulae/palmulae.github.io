@@ -9,6 +9,7 @@
     ],
     "colors": ["navy", "gold"],
     "status": "live",
+    "kind": "app",
     "url": "https://example.com/",
     "url_label": "Open Example App",
     "links": [

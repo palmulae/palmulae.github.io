@@ -5,8 +5,8 @@
     "line": "A private command center for its owner's own messages, email and calendar.",
     "description": "Proreta, a private command center for its owner's own messages, email and calendar.",
     "colors": ["sage", "navy"],
-    "status": "live",
-    "unlisted": true,
+    "status": "wip",
+    "kind": "app",
     "about": [
       "Proreta is a private command center that its owner runs at home. It brings the owner's own texts, email and calendar into one place, so nothing that needs an answer slips by.",
       "Email: it reads the owner's own Gmail with Google's read-only access, so it can't send, change or delete mail.",

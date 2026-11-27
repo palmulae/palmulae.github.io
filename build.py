@@ -37,7 +37,12 @@ DOCS = ROOT / "docs"
 MARKER = ".palmulae-build"
 
 PALETTE = ("navy", "sage", "maroon", "gold", "white")
-STATUSES = ("live", "soon")
+STATUSES = ("live", "soon", "wip")
+# The label on a card and its page while it isn't live.
+STATUS_CHIPS = {"soon": "Coming soon", "wip": "Work in progress"}
+# Apps and businesses get separate sections on the home page, in this order. Each kind's section
+# id, which is also the start of its heading and intro keys in site.json.
+KINDS = {"app": "apps", "business": "businesses"}
 # Folder names the site already uses, or that would confuse people, so no business gets them.
 RESERVED = {
     "404", "admin", "api", "app", "apple-touch-icon", "assets", "cname", "docs", "examples",
@@ -50,7 +55,7 @@ LINK_RE = re.compile(r"\[([^\]\n]+)\]\(([^)\s]+)\)")
 URL_CHARS_RE = re.compile(r"^[A-Za-z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+$")
 
 BUSINESS_KEYS = {
-    "slug": True, "name": True, "line": True, "colors": True, "status": True,
+    "slug": True, "name": True, "line": True, "colors": True, "status": True, "kind": False,
     "about": False, "description": False, "url": False, "url_label": False,
     "links": False, "contact": False, "privacy": False, "terms": False, "unlisted": False,
 }
@@ -66,8 +71,8 @@ PREVIEW_NOTE = (
     '<img src="{og}" alt="{alt}" width="1200" height="630" loading="lazy"></details>'
 )
 PREVIEW_EXAMPLES = (
-    "Example App and Example Studio are made up, to show how a business will look. "
-    "At launch the home page has no business section until you add the first one. "
+    "Example App and Example Studio are made up, to show how an app and a business will look. "
+    "On the real site, the Apps or Businesses section stays hidden until it has an entry. "
 )
 
 
@@ -200,8 +205,8 @@ def load_site():
     data = load_json(SITE / "site.json")
     where = "site/site.json"
     site = {k: need_str(data, k, where) for k in (
-        "name", "domain", "email", "description", "tagline", "lede", "ventures_heading",
-        "ventures_intro", "privacy_updated", "terms_updated", "og_image_alt")}
+        "name", "domain", "email", "description", "tagline", "lede", "apps_heading", "apps_intro",
+        "businesses_heading", "businesses_intro", "privacy_updated", "terms_updated", "og_image_alt")}
     check_email(site["email"], where)
     if not re.match(r"^[a-z0-9-]+(\.[a-z0-9-]+)+$", site["domain"]):
         raise BuildError(f"{where}: 'domain' should look like palmulae.com, with no https:// or slashes.")
@@ -244,7 +249,10 @@ def load_businesses(path, site):
         b["colors"] = colors
         b["status"] = need_str(raw, "status", where)
         if b["status"] not in STATUSES:
-            raise BuildError(f"{where}: 'status' should be \"live\" or \"soon\".")
+            raise BuildError(f"{where}: 'status' should be \"live\", \"soon\" or \"wip\".")
+        b["kind"] = raw.get("kind", "business")
+        if b["kind"] not in KINDS:
+            raise BuildError(f"{where}: 'kind' should be \"app\" or \"business\".")
         b["about"] = need_list_of_str(raw, "about", where, required=False, allow_str=True) or []
         b["url"] = need_str(raw, "url", where, required=False)
         if b["url"]:
@@ -318,6 +326,9 @@ class Builder:
         # Unlisted ones get their pages, but no card on the home page, no place in the sitemap,
         # and a noindex for search engines: reachable only by their address.
         self.listed = [b for b in self.businesses if not b["unlisted"]]
+        # The home page's sections, apps first, leaving out a kind with nothing listed: (id, entries).
+        self.sections = [(sid, [b for b in self.listed if b["kind"] == kind]) for kind, sid in KINDS.items()]
+        self.sections = [(sid, items) for sid, items in self.sections if items]
         self.templates = {p.stem: Template(p.read_text(encoding="utf-8")) for p in TEMPLATES.glob("*.html")}
         self.partials = {p.name: p.read_text(encoding="utf-8").strip() for p in PARTIALS.iterdir() if p.is_file()}
         self.pages = []  # (url path, file path, indexable)
@@ -341,8 +352,8 @@ class Builder:
         """Write one page. `here` is its address: "" for home, "privacy/" or "404.html"."""
         site, links = self.site, Links(here, self.preview, absolute)
         nav = []
-        if self.listed:
-            nav.append(f'<a href="{links.to("", "ventures")}">{esc(site["ventures_heading"])}</a>')
+        for sid, _ in self.sections:
+            nav.append(f'<a href="{links.to("", sid)}">{esc(site[sid + "_heading"])}</a>')
         nav.append(f'<a href="{links.to("", "contact")}">Contact</a>')
         banner = ""
         if self.preview:
@@ -372,12 +383,12 @@ class Builder:
     def home(self):
         site = self.site
         links = Links("", self.preview)
-        ventures = ""
-        if self.listed:
+        sections = []
+        for sid, items in self.sections:
             cards = []
-            for b in self.listed:
-                if b["status"] == "soon":
-                    status = '<span class="chip">Coming soon</span>'
+            for b in items:
+                if b["status"] in STATUS_CHIPS:
+                    status = f'<span class="chip">{STATUS_CHIPS[b["status"]]}</span>'
                 else:
                     where = urlsplit(b["url"]).netloc if b["url"] else f"{site['domain']}/{b['slug']}"
                     status = f'<p class="where">{esc(where)}</p>'
@@ -385,10 +396,12 @@ class Builder:
                     "card.html", c1=b["colors"][0], c2=b["colors"][1], blade=self.partials["blade.svg"],
                     href=links.to(f"{b['slug']}/"), name=words(b["name"]), line=inline(b["line"], b["slug"]),
                     status=status))
-            n = len(self.listed)
-            ventures = self.part(
-                "ventures.html", heading=words(site["ventures_heading"]), intro=inline(site["ventures_intro"], "site.json"),
-                cols=2 if n in (1, 2, 4) else 3, cards="\n".join(cards))
+            n = len(items)
+            sections.append(self.part(
+                "ventures.html", id=sid, heading=words(site[sid + "_heading"]),
+                intro=inline(site[sid + "_intro"], "site.json"), cols=2 if n in (1, 2, 4) else 3,
+                cards="\n".join(cards)))
+        ventures = "\n".join(sections)
         content = self.fill(
             "home", mark=self.partials["mark.svg"], site_name=esc(site["name"]),
             entry_headword=esc(site["entry"]["headword"]), entry_label=esc(site["entry"]["label"]),
@@ -432,7 +445,7 @@ class Builder:
             here = f"{b['slug']}/"
             links = Links(here, self.preview)
             w = b["slug"]
-            chip = '  <span class="chip">Coming soon</span>' if b["status"] == "soon" else ""
+            chip = f'  <span class="chip">{STATUS_CHIPS[b["status"]]}</span>' if b["status"] in STATUS_CHIPS else ""
             about = f'  <div class="prose">\n{paragraphs(b["about"], w)}\n  </div>' if b["about"] else ""
             buttons = []
             if b["url"]:

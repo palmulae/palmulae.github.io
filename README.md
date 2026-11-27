@@ -9,10 +9,10 @@ script, and served free by GitHub Pages from the `docs/` folder of this branch.
 | Path | What it holds |
 | --- | --- |
 | `site/site.json` | The words on the home page (tagline, Latin line, the sentence under them), the contact address and the dates on the privacy and terms pages. |
-| `site/businesses.json` | The apps and businesses, one entry each. While it's `[]`, the home page hides that section. |
+| `site/businesses.json` | The apps and businesses, one entry each. The home page lists apps and businesses in separate sections, and hides a section with nothing in it. |
 | `site/templates/` | The page layouts. `partials/` holds the oar drawings and the business card. |
 | `site/static/` | Copied to the site as is: the stylesheet, the fonts with their licenses, the icons and the link-preview picture. |
-| `site/examples/businesses.json` | Two made-up businesses, used only for previews. |
+| `site/examples/businesses.json` | A made-up app and a made-up business, used only for previews. |
 | `build.py` | Makes `docs/` from everything above. Python 3.9 or newer, nothing to install. |
 | `tools/render-images.js` | Redraws the icons and the link-preview picture. |
 | `docs/` | The finished site that GitHub Pages serves. Each build replaces it, so never edit it by hand. |
@@ -48,6 +48,7 @@ Add an entry to `site/businesses.json`. Only the first five fields are required.
     "line": "One sentence on what it does.",
     "colors": ["navy", "gold"],
     "status": "live",
+    "kind": "app",
     "about": ["A paragraph on who it's for.", "Another, if needed."],
     "url": "https://harbor.example.com/",
     "url_label": "Open Harbor",
@@ -74,7 +75,9 @@ Add an entry to `site/businesses.json`. Only the first five fields are required.
 
 - `slug` is the page address, `palmulae.com/harbor/`: lowercase letters, numbers and hyphens.
 - `colors` are the blade, then its stripe: two of `navy`, `sage`, `maroon`, `gold`, `white`.
-- `status` is `live`, or `soon` for a "Coming soon" card.
+- `status` is `live`, `soon` for a "Coming soon" card, or `wip` for a "Work in progress" one.
+- `kind` is `app` or `business` (the default), and decides which section of the home page lists it:
+  Apps or Businesses. Their headings and the sentence under each are in `site/site.json`.
 - `url` is the business's own site or app, if it has one. Without one, its page here is its home.
 - `contact` defaults to the site's address.
 - `"unlisted": true` keeps it off the home page and out of the sitemap, and asks search engines not to list
