@@ -64,7 +64,7 @@
           },
           {
             "title": "Who's waiting, and what's coming up",
-            "text": "The morning briefing notes that Nora is waiting on you, and finds Saturday's dinner on your calendar.",
+            "text": "The morning briefing notes that Nora is waiting on you, and finds Saturday's dinner on your calendar. Even before the briefing arrives, your list of people shows who's waiting on you, and cards show the coming week's plans with people you know.",
             "tag": "progress"
           },
           {
@@ -80,8 +80,8 @@
             "src_dark": "proreta/command-center-dark.webp",
             "width": 1920,
             "height": 1080,
-            "alt": "Proreta's prototype: everyone you talk to in a list on the left, a text conversation in the middle, and that person's settings, notes and to-dos on the right.",
-            "caption": "A real screen from the prototype, with made-up people and messages."
+            "alt": "Proreta's prototype: everyone you talk to in a list on the left, a text conversation in the middle, and that person's settings, notes, and to-dos on the right.",
+            "caption": "A real screen from the prototype as it's being built, with made-up people and messages. Some parts it shows, such as the briefing, notes, and calls, aren't installed yet."
           }
         }
       },
@@ -117,12 +117,12 @@
                 "tag": "now"
               },
               {
-                "text": "Plans from Google Calendar",
-                "tag": "progress"
+                "text": "Plans from Google Calendar, shown on cards",
+                "tag": "now"
               },
               {
                 "text": "Group chats in a list of their own",
-                "tag": "progress"
+                "tag": "now"
               },
               {
                 "text": "Calls",
@@ -140,8 +140,12 @@
             "text": "Proreta keeps track of who's waiting on you, what's coming up, and what you know about each person.",
             "points": [
               {
-                "text": "Who's waiting on you, and since when",
-                "tag": "progress"
+                "text": "Who's waiting on you in one-to-one texts and email, and since when",
+                "tag": "now"
+              },
+              {
+                "text": "Cards worked out at home: overdue replies, the week's plans, new contacts, and hard news in texts",
+                "tag": "now"
               },
               {
                 "text": "A short briefing each morning",
@@ -176,7 +180,7 @@
               },
               {
                 "text": "Reminder cards for people on Remind",
-                "tag": "progress"
+                "tag": "now"
               },
               {
                 "text": "Replies drafted at home for people on Draft",
@@ -207,11 +211,11 @@
           },
           {
             "title": "Install, and choose privacy settings",
-            "text": "Each part installs on its own computer. Along the way you choose how strict to be, such as which people never leave your own computers."
+            "text": "Each part installs on its own computer. Along the way you choose how strict to be, such as which people stay on your own computers."
           },
           {
             "title": "Connect accounts and approve access",
-            "text": "Give Gmail and Google Calendar read-only access, let the Mac helper read Messages, and register your YubiKey."
+            "text": "Give Gmail and Google Calendar read-only access, let the Mac helper read Messages and Contacts, and register your YubiKey."
           },
           {
             "title": "Check it works, then meet your people",
@@ -239,12 +243,12 @@
           {
             "title": "A security key",
             "tag": "required",
-            "text": "Opening Proreta, and every step that loosens privacy, needs a touch of a security key such as a YubiKey. Two are best, one as a spare."
+            "text": "Opening Proreta, and every step on its page that loosens privacy, needs a touch of a security key such as a YubiKey. Two are best, one as a spare."
           },
           {
             "title": "A computer for the local AI model",
             "tag": "provisional",
-            "text": "Sorting, the briefing, and drafts run on an AI model at home. The prototype uses a mini PC with 128 GB of memory, shared with its graphics."
+            "text": "An AI model at home reads each new text once, to spot hard news, plans, and what needs a reply. It will write the briefing and drafts too. The prototype uses a mini PC with 128 GB of memory, shared with its graphics."
           },
           {
             "title": "An always-on home server",
@@ -253,7 +257,7 @@
           },
           {
             "title": "Accounts it reads",
-            "text": "Messages on your Mac, and Gmail with read-only access; Google Calendar, also read-only, is being added. Other email and calendar services aren't supported yet."
+            "text": "Messages and Contacts on your Mac, and Gmail and Google Calendar with read-only access. It reads only the main calendar of each Google account. Other email and calendar services aren't supported yet."
           },
           {
             "title": "Where you use it",
@@ -308,7 +312,7 @@
           {
             "title": "Your accounts",
             "items": [
-              "Messages, on your Mac",
+              "Messages and Contacts, on your Mac",
               "Gmail, read-only",
               "Google Calendar, read-only"
             ]
@@ -319,8 +323,8 @@
             "style": "home",
             "items": [
               "Everything is stored here",
-              "A local AI model sorts, summarizes, and drafts",
-              "Money and health messages never leave"
+              "A local AI model sorts and summarizes, and will draft replies",
+              "Money, health, and hard news stay home"
             ]
           },
           {
@@ -346,11 +350,11 @@
           },
           {
             "title": "Read-only access",
-            "text": "It reads Gmail, and soon Google Calendar, with Google's read-only permissions, so it can't send, change, or delete mail or events. Unread messages stay unread."
+            "text": "It reads Gmail and Google Calendar with Google's read-only permissions, so it can't send, change, or delete mail or events. It never asks Google for an event's description, where meeting passcodes often sit. Unread messages stay unread."
           },
           {
-            "title": "Money and health stay home",
-            "text": "As each message arrives, your own computers check it against fixed lists of money and health words. A match, or a maybe, marks it, and a mark is only ever added, never taken off. The rule that decides what may go to a cloud AI refuses anything marked, and it runs where your messages are stored, not in the page."
+            "title": "Money, health, and hard news stay home",
+            "text": "As each message arrives, your own computers check it against fixed lists of money and health words. A match, or a maybe, marks it. Your local AI model also reads each new text and marks any conversation with hard news, such as an illness or a lost job. Only you can clear a mark, at your home server. The rule that decides what may go to a cloud AI refuses anything marked, and it runs where your messages are stored, not in the page."
           },
           {
             "title": "The cloud AI connection",
@@ -358,15 +362,15 @@
           },
           {
             "title": "What a cloud AI may receive",
-            "text": "Messages with people you've cleared one by one with your YubiKey, with phone numbers, email addresses, and street addresses swapped for stand-ins. A message with a number of four or more digits, or one of your code words, is never sent. In the current design, email, group chats, calls, photos, and anything marked stay home."
+            "text": "Messages with people you've cleared one by one, with phone numbers, email addresses, and street addresses swapped for stand-ins. A message with a number of four or more digits, or one of your code words, is never sent. In the current design, email, group chats, photos, and anything marked stay home."
           },
           {
             "title": "A touch of your key",
-            "text": "Opening Proreta, clearing a person for the cloud AI, and later sending a message each need a touch of your YubiKey, checked where your messages are stored."
+            "text": "Opening Proreta, clearing a person for the cloud AI on Proreta's page, and later sending a message each need a touch of your YubiKey, checked where your messages are stored."
           },
           {
             "title": "An emergency stop",
-            "text": "Texting STOP pauses everything at once."
+            "text": "Once sending is on, texting STOP from your own number pauses all sending at once."
           },
           {
             "title": "A walled-off network",
@@ -385,17 +389,17 @@
           {
             "title": "Today",
             "tag": "now",
-            "text": "A private prototype has run at the developer's home since November 2026, for the developer's own accounts: texts and email by person, circles, the Watch, Remind, and Draft setting, cloud AI access set person by person, and sign-in with a YubiKey."
+            "text": "A private prototype has run at the developer's home since November 2026, for the developer's own accounts: texts and email by person, calendar plans, circles, who's waiting on you, cards for what needs you, the Watch, Remind, and Draft setting, cloud AI access set person by person, and sign-in with a YubiKey."
           },
           {
             "title": "Next",
             "tag": "progress",
-            "text": "Calendar plans and who's waiting, the morning briefing, notes and facts, calls, and replies drafted at home. Each part is tested on made-up data before it's installed."
+            "text": "The morning briefing, notes and facts, calls, catch-up and birthday reminders, and replies drafted at home. Each part is tested on made-up data before it's installed."
           },
           {
             "title": "Later",
             "tag": "planned",
-            "text": "Opening the cloud AI for people you've cleared, sending from Proreta, reminders, search, WhatsApp and Messenger, a phone version, and the public installer."
+            "text": "Opening the cloud AI for people you've cleared, sending from Proreta, reminders you set by asking, search, WhatsApp and Messenger, a phone version, and the public installer."
           },
           {
             "title": "Source code",
