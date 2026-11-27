@@ -42,17 +42,50 @@
   <h1 class="biz-name">Proreta</h1>
   <p class="biz-line">A private command center for your texts, email and calendar.</p>
   <span class="chip">Work in progress</span>
-  <div class="prose">
+  <div class="prose biz-about">
     <p>Proreta brings your texts, email and calendar into one place, so nothing that needs an answer slips by. It’s built for privacy-minded people, including anyone thinking about running local AI on their email.</p>
-    <p>Privacy: it runs on your own computers at home and keeps what it reads there. You choose what, if anything, an AI assistant may read.</p>
-    <p>Texts: it reads your text messages and contacts on your own computers.</p>
-    <p>Email: it reads your Gmail with Google’s read-only access, so it can’t send, change or delete mail.</p>
-    <p>Calendar: it reads your Google calendars, read-only, and can’t add, change or delete events.</p>
-    <p>The current prototype is intended for the developer’s own accounts, and no one else signs in to it. Later, Proreta may be offered as a package with guided instructions, so you can install your own copy at home.</p>
   </div>
 
+  <figure class="shot">
+    <picture>
+      <source srcset="../assets/proreta/command-center-dark.webp" media="(prefers-color-scheme: dark)">
+      <img src="../assets/proreta/command-center-light.webp" width="1920" height="1080" alt="Proreta’s command center: everyone you talk to in a list on the left, a text conversation in the middle, and that person’s settings, notes and to-dos on the right." decoding="async">
+    </picture>
+    <figcaption>The command center prototype, shown with made-up people and messages.</figcaption>
+  </figure>
+  <section class="biz-section" aria-labelledby="proreta-what-makes-it-different">
+    <div class="section-head"><h2 id="proreta-what-makes-it-different">What makes it different</h2></div>
+    <ul class="features" style="--cols: 3">
+      <li class="feature"><span class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 4.5h14A1.5 1.5 0 0 1 20.5 6v9a1.5 1.5 0 0 1-1.5 1.5h-8.2L6.5 20v-3.5H5A1.5 1.5 0 0 1 3.5 15V6A1.5 1.5 0 0 1 5 4.5z"/><path d="M7.5 9h9M7.5 12.5h6"/></svg></span><h3>iMessage too</h3><p>A helper on your own Mac brings in your iMessage and SMS threads, right next to your email. Email-only assistants never see them.</p></li>
+      <li class="feature"><span class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 13.5l2.6-7.2A1.5 1.5 0 0 1 7.5 5.3h9a1.5 1.5 0 0 1 1.4 1l2.6 7.2V18a1.5 1.5 0 0 1-1.5 1.5h-14A1.5 1.5 0 0 1 3.5 18z"/><path d="M3.5 13.5H8l1.5 2.5h5l1.5-2.5h4.5"/></svg></span><h3>One place, by person</h3><p>Texts, email and calendar in one place, organized around the people in your life instead of by app.</p></li>
+      <li class="feature"><span class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4.5" width="18" height="15" rx="1.5"/><circle cx="9" cy="10.5" r="2.2"/><path d="M5.8 16c.5-1.8 1.7-2.8 3.2-2.8s2.7 1 3.2 2.8M14.5 9.5h3.5M14.5 13h3.5"/></svg></span><h3>Contacts that connect</h3><p>Each person’s phone numbers and email addresses are matched, so everything from them lands on one page.</p></li>
+      <li class="feature"><span class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6"/></svg></span><h3>Knows who’s who</h3><p>People are grouped as family, close friends, friends or professional, suggested from your texts and confirmed by you. Businesses get their own tab.</p></li>
+      <li class="feature"><span class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 3.5h8.5l3.5 3.5v13.5H6z"/><path d="M14.5 3.5V7H18M9 11.5h6M9 15h6M9 18h3.5"/></svg></span><h3>Remembers the details</h3><p>Notes, to-dos and facts for each person. Facts it picks up from your texts wait for your OK.</p></li>
+      <li class="feature"><span class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11 4l1.8 4.9 4.9 1.8-4.9 1.8L11 17.4l-1.8-4.9-4.9-1.8 4.9-1.8z"/><path d="M18 15l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg></span><h3>Help, person by person</h3><p>For each person, choose Watch, Remind or Draft: from keeping track, to reminders, to replies drafted for your review.</p></li>
+    </ul>
+  </section>
+  <section class="biz-section" aria-labelledby="proreta-privacy-and-security">
+    <div class="section-head"><h2 id="proreta-privacy-and-security">Privacy and security</h2></div>
+    <ul class="features" style="--cols: 3">
+      <li class="feature"><span class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 11L12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/></svg></span><h3>Kept at home</h3><p>What it reads is kept on your own computers. Money and health content is handled only by a local AI model, and you choose what, if anything, a cloud AI may read.</p></li>
+      <li class="feature"><span class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="10.5" width="14" height="10" rx="1.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></span><h3>Read-only access</h3><p>It reads Gmail and Google Calendar with Google’s read-only access, so it can’t send, change or delete mail or events.</p></li>
+      <li class="feature"><span class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="7.5" y="2.5" width="9" height="13.5" rx="2"/><circle cx="12" cy="9.5" r="2"/><path d="M9.5 16v4.5h5V16"/></svg></span><h3>Hardware key</h3><p>Opening it, and raising anyone’s AI access, need a touch of your YubiKey.</p></li>
+      <li class="feature"><span class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.3 2.4 3.4 5.2 3.4 8.5s-1.1 6.1-3.4 8.5c-2.3-2.4-3.4-5.2-3.4-8.5S9.7 5.9 12 3.5z"/><path d="M4.5 4.5l15 15"/></svg></span><h3>Off the internet</h3><p>It has no public address. It’s reachable only at home or over a VPN, and always over HTTPS.</p></li>
+      <li class="feature"><span class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="2.5" stroke-dasharray="2.6 2.4"/><rect x="8.5" y="7.5" width="7" height="9" rx="1"/><path d="M10.5 10.5h3M10.5 13.5h3"/></svg></span><h3>Network isolation</h3><p>It runs on its own walled-off part of your home network.</p></li>
+      <li class="feature"><span class="feature-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8.3 3h7.4L21 8.3v7.4L15.7 21H8.3L3 15.7V8.3z"/><path d="M10 9v6M14 9v6"/></svg></span><h3>Emergency stop</h3><p>One STOP switch pauses everything at once.</p></li>
+    </ul>
+  </section>
+  <section class="biz-section" aria-labelledby="proreta-status">
+    <div class="section-head"><h2 id="proreta-status">Status</h2></div>
+    <div class="prose biz-prose">
+      <p>The current prototype is intended for the developer’s own accounts, and no one else signs in to it. Later, Proreta may be offered as a package with guided instructions, so you can install your own copy at home.</p>
+    </div>
+  </section>
+  <div class="biz-foot">
   <p class="biz-legal"><a href="../proreta/privacy/">Privacy policy</a><a href="../proreta/terms/">Terms of service</a></p>
   <p class="biz-contact">Questions: <a href="mailto:info@palmulae.com">info@palmulae.com</a></p>
+  <p class="fine-print">Gmail and Google Calendar are trademarks of Google LLC. YubiKey is a registered trademark of Yubico AB. iMessage and Mac are trademarks of Apple Inc.</p>
+  </div>
 </article>
   </main>
   <footer class="foot">

@@ -289,9 +289,12 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
   overflow-wrap: anywhere;
 }
 
-/* A business's own page */
-.biz { display: grid; gap: 1rem; justify-items: start; max-width: 44rem; min-width: 0; }
+/* A business's own page: words in a readable column; the picture and the cards across the page */
+.biz { display: grid; gap: 1rem; justify-items: start; min-width: 0; }
+.biz > * { max-width: 44rem; }
+.biz > .shot, .biz > .biz-section, .biz > .biz-foot { width: 100%; max-width: none; }
 .biz .blade { width: 11rem; }
+.biz-about { font-size: 1.125rem; text-wrap: pretty; }
 .biz-name {
   margin: .5rem 0 0;
   font-family: var(--font-display);
@@ -322,6 +325,58 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
 }
 .visit:hover { background: var(--ink); color: var(--paper); }
 .biz-contact { margin: 0; color: var(--ink-soft); }
+
+/* A screenshot, framed like a window */
+.shot { margin: 1.5rem 0 0; display: grid; gap: .75rem; }
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--card);
+  box-shadow: 0 1px 2px rgba(19, 35, 38, .06), 0 28px 56px -28px rgba(19, 35, 38, .4);
+}
+.shot figcaption { font-size: .85rem; color: var(--ink-soft); }
+
+/* Cards with an icon, a title and a line, in titled groups */
+.biz-section { display: grid; gap: 1.25rem; margin-top: 2.5rem; }
+.features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  gap: 1rem;
+}
+@media (max-width: 860px) { .features { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .features { grid-template-columns: minmax(0, 1fr); } }
+.feature {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: .4rem;
+  padding: 1.25rem 1.25rem 1.2rem;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+}
+.feature-icon {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-bottom: .5rem;
+  border-radius: 6px;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+}
+.feature-icon .icon { width: 1.375rem; height: 1.375rem; }
+.feature h3 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 1.45rem; line-height: 1.1; }
+.feature p { margin: 0; color: var(--ink-soft); font-size: .95rem; line-height: 1.55; }
+.biz-prose { max-width: 44rem; }
+.biz-foot { display: grid; gap: .6rem; margin-top: 2.5rem; }
+.fine-print { margin: .4rem 0 0; max-width: 44rem; font-size: .78rem; line-height: 1.5; color: var(--ink-soft); }
 
 /* Documents: privacy, terms, not found */
 .doc { display: grid; gap: 1rem; max-width: 40rem; min-width: 0; }

@@ -15,6 +15,20 @@
     "links": [
       { "label": "Get it on the App Store", "url": "https://example.com/app-store" }
     ],
+    "features": [
+      {
+        "heading": "What it does",
+        "items": [
+          { "icon": "inbox", "title": "First thing", "text": "One line on the first thing it does." },
+          { "icon": "lock", "title": "Second thing", "text": "One line on the second." },
+          { "icon": "sparkle", "title": "Third thing", "text": "One line on the third." }
+        ]
+      }
+    ],
+    "sections": [
+      { "heading": "Status", "paragraphs": ["A short note on where the app stands."] }
+    ],
+    "fine_print": "Names of other companies' products are their owners' trademarks.",
     "privacy": {
       "updated": "November 24, 2026",
       "intro": "This policy explains what Example App collects when you use it, and why. It's sample text: each business writes its own.",

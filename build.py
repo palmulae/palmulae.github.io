@@ -58,7 +58,11 @@ BUSINESS_KEYS = {
     "slug": True, "name": True, "line": True, "colors": True, "status": True, "kind": False,
     "about": False, "description": False, "url": False, "url_label": False,
     "links": False, "contact": False, "privacy": False, "terms": False, "unlisted": False,
+    "image": False, "features": False, "sections": False, "fine_print": False,
 }
+IMAGE_KEYS = {"src": True, "src_dark": False, "width": True, "height": True, "alt": True, "caption": False}
+IMAGE_TYPES = (".webp", ".png", ".jpg", ".jpeg", ".avif")
+IMAGE_PATH_RE = re.compile(r"^[a-z0-9][a-z0-9_-]*(?:/[a-z0-9][a-z0-9._-]*)*$")
 PRIVACY_KEYS = {
     "updated": True, "intro": True, "collects": True, "uses": True, "shares": True,
     "keeps": True, "choices": True, "extra": False,
@@ -287,8 +291,90 @@ def load_businesses(path, site):
             check_keys(b["terms"], TERMS_KEYS, w)
             need_str(b["terms"], "updated", w)
             need_list_of_str(b["terms"], "paragraphs", w)
+        b["image"] = load_image(raw.get("image"), f"{where}, image", b["slug"])
+        b["features"] = load_features(raw.get("features"), where)
+        b["sections"] = load_sections(raw.get("sections"), where)
+        b["fine_print"] = need_str(raw, "fine_print", where, required=False)
         out.append(b)
     return out
+
+
+def load_image(img, where, slug):
+    """A picture for the page, from site/static/assets/, with an optional dark-mode version."""
+    if img is None:
+        return None
+    check_keys(img, IMAGE_KEYS, where)
+    out = {}
+    for key in ("src", "src_dark"):
+        path = need_str(img, key, where, required=key == "src")
+        if path is None:
+            continue
+        if not IMAGE_PATH_RE.match(path) or not path.endswith(IMAGE_TYPES) or not (STATIC / "assets" / path).is_file():
+            raise BuildError(f"{where}: '{key}' should name a picture in site/static/assets/, like "
+                             f"\"{slug}/screen.webp\" (one of {', '.join(IMAGE_TYPES)}).")
+        out[key] = path
+    for key in ("width", "height"):
+        value = img.get(key)
+        if not isinstance(value, int) or isinstance(value, bool) or not 1 <= value <= 10000:
+            raise BuildError(f"{where}: '{key}' should be the picture's {key} in pixels, a whole number without quotes.")
+        out[key] = value
+    out["alt"] = need_str(img, "alt", where)
+    out["caption"] = need_str(img, "caption", where, required=False)
+    return out
+
+
+def load_features(groups, where):
+    """Groups of short cards, each with a heading: [{"heading", "items": [{"icon", "title", "text"}]}]."""
+    if groups is None:
+        return []
+    shape = "a list of {\"heading\": ..., \"items\": [{\"icon\": ..., \"title\": ..., \"text\": ...}]}"
+    if not isinstance(groups, list):
+        raise BuildError(f"{where}: 'features' should be {shape}.")
+    icons = sorted(p.stem[len("icon-"):] for p in PARTIALS.glob("icon-*.svg"))
+    out = []
+    for n, group in enumerate(groups, 1):
+        w = f"{where}, features {n}"
+        check_keys(group, {"heading": True, "items": True}, w)
+        items = group["items"]
+        if not isinstance(items, list) or not items:
+            raise BuildError(f"{w}: 'items' should be a list of {{\"icon\": ..., \"title\": ..., \"text\": ...}}.")
+        cards = []
+        for k, item in enumerate(items, 1):
+            wi = f"{w}, item {k}"
+            check_keys(item, {"icon": False, "title": True, "text": True}, wi)
+            icon = need_str(item, "icon", wi, required=False)
+            if icon is not None and icon not in icons:
+                raise BuildError(f"{wi}: 'icon' should be one of {', '.join(icons)}.")
+            cards.append({"icon": icon, "title": need_str(item, "title", wi), "text": need_str(item, "text", wi)})
+        out.append({"heading": need_str(group, "heading", w), "items": cards})
+    return out
+
+
+def load_sections(items, where):
+    """Short titled sections after the cards: [{"heading", "paragraphs": [...]}]."""
+    if items is None:
+        return []
+    if not isinstance(items, list):
+        raise BuildError(f"{where}: 'sections' should be a list of {{\"heading\": ..., \"paragraphs\": [...]}}.")
+    out = []
+    for n, sec in enumerate(items, 1):
+        w = f"{where}, sections {n}"
+        check_keys(sec, {"heading": True, "paragraphs": True}, w)
+        out.append({"heading": need_str(sec, "heading", w), "paragraphs": need_list_of_str(sec, "paragraphs", w)})
+    return out
+
+
+def biz_section(b, sec):
+    hid = anchor(b["slug"], sec["heading"])
+    return (f'  <section class="biz-section" aria-labelledby="{hid}">\n'
+            f'    <div class="section-head"><h2 id="{hid}">{words(sec["heading"])}</h2></div>\n'
+            f'    <div class="prose biz-prose">\n{paragraphs(sec["paragraphs"], b["slug"], "      ")}\n    </div>\n'
+            f'  </section>')
+
+
+def anchor(*parts):
+    """An id for a heading, from words: ("proreta", "What it reads") -> "proreta-what-it-reads"."""
+    return "-".join(re.sub(r"[^a-z0-9]+", "-", p.lower()).strip("-") for p in parts)
 
 
 # ---------------------------------------------------------------- building pages
@@ -446,7 +532,11 @@ class Builder:
             links = Links(here, self.preview)
             w = b["slug"]
             chip = f'  <span class="chip">{STATUS_CHIPS[b["status"]]}</span>' if b["status"] in STATUS_CHIPS else ""
-            about = f'  <div class="prose">\n{paragraphs(b["about"], w)}\n  </div>' if b["about"] else ""
+            about = f'  <div class="prose biz-about">\n{paragraphs(b["about"], w)}\n  </div>' if b["about"] else ""
+            figure = self.biz_figure(b, links)
+            features = "\n".join(self.biz_features(b, group) for group in b["features"])
+            secs = "\n".join(biz_section(b, sec) for sec in b["sections"])
+            fine = f'  <p class="fine-print">{inline(b["fine_print"], w)}</p>' if b["fine_print"] else ""
             buttons = []
             if b["url"]:
                 buttons.append(f'<a class="visit" href="{esc(b["url"])}">{esc(b["url_label"])}</a>')
@@ -461,13 +551,43 @@ class Builder:
             content = self.fill(
                 "business", c1=b["colors"][0], c2=b["colors"][1], blade=self.partials["blade.svg"],
                 name=words(b["name"]), line=inline(b["line"], w), chip=chip, about=about, links=link_row,
-                legal=legal_row, contact=esc(b["contact"]))
+                figure=figure, features=features, sections=secs, legal=legal_row, contact=esc(b["contact"]),
+                fine_print=fine)
             self.page(here, title=f"{b['name']} · {self.site['name']}", description=b["description"], content=content,
                       indexable=not b["unlisted"])
             if b["privacy"]:
                 self.business_privacy(b)
             if b["terms"]:
                 self.business_terms(b)
+
+    def biz_figure(self, b, links):
+        """The page's picture, framed like a screen, with a dark-mode version when there is one."""
+        img = b["image"]
+        if not img:
+            return ""
+        src = links.root + "assets/" + img["src"]
+        dark = ""
+        if img.get("src_dark"):
+            dark = (f'      <source srcset="{esc(links.root + "assets/" + img["src_dark"])}" '
+                    f'media="(prefers-color-scheme: dark)">\n')
+        caption = f'\n    <figcaption>{inline(img["caption"], b["slug"])}</figcaption>' if img["caption"] else ""
+        return (f'  <figure class="shot">\n    <picture>\n{dark}'
+                f'      <img src="{esc(src)}" width="{img["width"]}" height="{img["height"]}" '
+                f'alt="{words(img["alt"])}" decoding="async">\n    </picture>{caption}\n  </figure>')
+
+    def biz_features(self, b, group):
+        hid = anchor(b["slug"], group["heading"])
+        cards = []
+        for item in group["items"]:
+            icon = ""
+            if item["icon"]:
+                icon = f'<span class="feature-icon">{self.partials["icon-" + item["icon"] + ".svg"]}</span>'
+            cards.append(f'      <li class="feature">{icon}<h3>{words(item["title"])}</h3>'
+                         f'<p>{inline(item["text"], b["slug"])}</p></li>')
+        cols = 2 if len(cards) in (1, 2, 4) else 3
+        return (f'  <section class="biz-section" aria-labelledby="{hid}">\n'
+                f'    <div class="section-head"><h2 id="{hid}">{words(group["heading"])}</h2></div>\n'
+                f'    <ul class="features" style="--cols: {cols}">\n' + "\n".join(cards) + '\n    </ul>\n  </section>')
 
     def business_privacy(self, b):
         here = f"{b['slug']}/privacy/"
@@ -566,6 +686,8 @@ class PageReader(HTMLParser):
         for key in ("href", "src"):
             if a.get(key) is not None:
                 self.refs.append(a[key])
+        if a.get("srcset"):
+            self.refs += [c.split()[0] for c in a["srcset"].split(",") if c.strip()]
         if tag == "meta" and a.get("property") == "og:image":
             self.refs.append(a.get("content", ""))
 

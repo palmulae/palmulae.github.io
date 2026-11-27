@@ -54,6 +54,15 @@ Add an entry to `site/businesses.json`. Only the first five fields are required.
     "url_label": "Open Harbor",
     "links": [{ "label": "Get it on the App Store", "url": "https://apps.apple.com/..." }],
     "contact": "info@palmulae.com",
+    "image": {
+      "src": "harbor/screen.webp", "src_dark": "harbor/screen-dark.webp", "width": 1920, "height": 1080,
+      "alt": "What the screen shows.", "caption": "A line under the picture."
+    },
+    "features": [
+      { "heading": "What it does", "items": [{ "icon": "mail", "title": "Email", "text": "One line on it." }] }
+    ],
+    "sections": [{ "heading": "Status", "paragraphs": ["..."] }],
+    "fine_print": "Gmail is a trademark of Google LLC.",
     "privacy": {
       "updated": "January 5, 2027",
       "intro": "What this policy covers.",
@@ -82,6 +91,17 @@ Add an entry to `site/businesses.json`. Only the first five fields are required.
 - `contact` defaults to the site's address.
 - `"unlisted": true` keeps it off the home page and out of the sitemap, and asks search engines not to list
   its pages. They still work at their addresses: for a private tool that a sign-in provider needs pages for.
+- `image` puts a screenshot under the opening words. `src` is a picture in `site/static/assets/`
+  (`.webp`, `.png`, `.jpg` or `.avif`), `src_dark` an optional one shown to visitors in dark mode,
+  `width` and `height` its size in pixels, `alt` what it shows for people who can't see it, and
+  `caption` an optional line under it.
+- `features` adds groups of cards, each with a `heading` and `items`. A card has a `title`, a line of
+  `text` and an optional `icon`: `calendar`, `chip`, `circles`, `contact`, `globe-off`, `home`, `inbox`,
+  `key`, `lock`, `mail`, `message`, `network`, `note`, `sparkle` or `stop`. The icons are the site's own
+  drawings, in `site/templates/partials/icon-*.svg`; a new file there adds one. Use these, not other
+  companies' logos, which need their owners' permission.
+- `sections` adds short titled sections after the cards, and `fine_print` a small line at the bottom,
+  for trademark notes.
 - `privacy` and `terms` make `palmulae.com/harbor/privacy/` and `palmulae.com/harbor/terms/`,
   the addresses app stores and sign-in providers ask for. In any `collects`, `uses`, `shares` or
   `choices`, one piece of text makes a paragraph and a list makes bullet points.
