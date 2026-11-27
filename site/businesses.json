@@ -1,32 +1,36 @@
 [
   {
-    "slug": "home-mail-reader",
-    "name": "Home mail reader",
-    "line": "A private tool that reads its owner's own Gmail, read-only.",
-    "description": "Home mail reader, a private tool that reads its owner's own Gmail, read-only.",
+    "slug": "proreta",
+    "name": "Proreta",
+    "line": "A private command center for its owner's own messages, email and calendar.",
+    "description": "Proreta, a private command center for its owner's own messages, email and calendar.",
     "colors": ["sage", "navy"],
     "status": "live",
     "unlisted": true,
     "about": [
-      "Home mail reader is a small tool that its owner runs at home to keep up with the owner's own email. It reads mail with Google's read-only Gmail access, so it can't send, change or delete anything.",
+      "Proreta is a private command center that its owner runs at home. It brings the owner's own texts, email and calendar into one place, so nothing that needs an answer slips by.",
+      "Email: it reads the owner's own Gmail with Google's read-only access, so it can't send, change or delete mail.",
+      "Calendar: it reads the owner's own Google calendars, read-only, and can't add, change or delete events.",
       "It's for one person's own use. It isn't offered to anyone else, and no one else signs in to it."
     ],
     "privacy": {
       "updated": "November 27, 2026",
-      "intro": "This policy covers Home mail reader, a private tool that reads its owner's own Gmail. Only its owner signs in to it, with the owner's own Google accounts.",
+      "intro": "This policy covers Proreta, a private command center that reads its owner's own messages, email and calendar. Only its owner signs in to it, with the owner's own accounts.",
       "collects": [
-        "With the read-only Gmail access that the owner grants at Google's sign-in, it reads the messages in the owner's own Gmail accounts, with their headers and labels.",
-        "It can't send, change or delete mail, and it reads nothing else in the Google account."
+        "Email: with the read-only Gmail access that the owner grants at Google's sign-in, it reads the messages in the owner's own Gmail accounts, with their headers and labels.",
+        "Calendar: with read-only Google Calendar access granted the same way, it reads the events on the owner's own calendars, such as their times, titles, places and guests.",
+        "Texts and contacts: on the owner's own computers, it reads the owner's own text messages and contacts.",
+        "It can't send, change or delete mail or calendar events, and it reads nothing else in the Google account."
       ],
-      "uses": "Only to help the owner keep up with the owner's own mail, for example by showing it, sorting it and noting what needs an answer.",
-      "shares": "It's never sold, used for ads or used to train AI models. What it reads is kept on the owner's own devices. The owner may let an AI assistant read some of it, only to help with the owner's own mail.",
-      "keeps": "For as long as the owner keeps it on those devices. Removing the tool's access in the Google account stops all further reading.",
+      "uses": "Only to help the owner keep up with the owner's own messages, email and calendar, for example by showing them in one place, sorting them and noting what needs an answer.",
+      "shares": "It's never sold, used for ads or used to train AI models. What it reads is kept on the owner's own devices. The owner may let an AI assistant read some of it, only to help with the owner's own messages.",
+      "keeps": "For as long as the owner keeps it on those devices. Removing Proreta's access in the Google account stops all further reading of email and calendar.",
       "choices": "The owner can remove its access at any time, under [Third-party apps and services](https://myaccount.google.com/connections) in the Google account.",
       "extra": [
         {
           "heading": "Google user data",
           "paragraphs": [
-            "Home mail reader's use and transfer of information received from Google APIs adheres to the [Google API Services User Data Policy](https://developers.google.com/terms/api-services-user-data-policy), including the Limited Use requirements."
+            "Proreta's use and transfer of information received from Google APIs adheres to the [Google API Services User Data Policy](https://developers.google.com/terms/api-services-user-data-policy), including the Limited Use requirements."
           ]
         }
       ]
@@ -34,7 +38,7 @@
     "terms": {
       "updated": "November 27, 2026",
       "paragraphs": [
-        "Home mail reader is a private tool for its owner's own use. It isn't offered, sold or licensed to anyone else, and no one else may sign in to it."
+        "Proreta is a private tool for its owner's own use. It isn't offered, sold or licensed to anyone else, and no one else may sign in to it."
       ],
       "sections": [
         { "heading": "As is", "paragraphs": ["It's provided as is, with no promise that it works or stays available."] },
