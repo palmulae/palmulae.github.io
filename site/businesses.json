@@ -2,18 +2,18 @@
   {
     "slug": "proreta",
     "name": "Proreta",
-    "line": "A private command center for its owner's own messages, email and calendar.",
-    "description": "Proreta, a private command center for its owner's own messages, email and calendar.",
+    "line": "A private command center for your texts, email and calendar.",
+    "description": "Proreta is a private command center for your texts, email and calendar that runs on your own computers at home.",
     "colors": ["sage", "navy"],
     "status": "wip",
     "kind": "app",
     "about": [
-      "Proreta is a private command center that its owner runs at home. It brings the owner's own texts, email and calendar into one place, so nothing that needs an answer slips by.",
-      "Email: it reads the owner's own Gmail with Google's read-only access, so it can't send, change or delete mail.",
-      "Calendar: it reads the owner's own Google calendars, read-only, and can't add, change or delete events.",
-      "Privacy: what it reads is kept on the owner's own devices, and the owner decides what, if anything, an AI assistant may read.",
-      "For now it's for one person's own use. It isn't offered to anyone else, and no one else signs in to it.",
-      "Later it may be offered as a package with guided instructions, so others can install their own copy at home. It's meant for privacy-minded people, such as those thinking about using local AI on their email."
+      "Proreta brings your texts, email and calendar into one place, so nothing that needs an answer slips by. It's built for privacy-minded people, including anyone thinking about running local AI on their email.",
+      "Privacy: it runs on your own computers at home and keeps what it reads there. You choose what, if anything, an AI assistant may read.",
+      "Texts: it reads your text messages and contacts on your own computers.",
+      "Email: it reads your Gmail with Google's read-only access, so it can't send, change or delete mail.",
+      "Calendar: it reads your Google calendars, read-only, and can't add, change or delete events.",
+      "The current prototype is intended for the developer's own accounts, and no one else signs in to it. Later, Proreta may be offered as a package with guided instructions, so you can install your own copy at home."
     ],
     "privacy": {
       "updated": "November 27, 2026",
