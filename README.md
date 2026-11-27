@@ -8,13 +8,15 @@ script, and served free by GitHub Pages from the `docs/` folder of this branch.
 
 | Path | What it holds |
 | --- | --- |
-| `site/site.json` | The words on the home page (tagline, Latin line, the sentence under them), the contact address and the dates on the privacy and terms pages. |
-| `site/businesses.json` | The apps and businesses, one entry each. The home page lists apps and businesses in separate sections, and hides a section with nothing in it. |
-| `site/templates/` | The page layouts. `partials/` holds the oar drawings and the business card. |
+| `site/site.json` | The words on the home page (the headline, the sentence under it and the heading over the list of apps and businesses), the contact address and the dates on the privacy and terms pages. |
+| `site/businesses.json` | The apps and businesses, one entry each. The home page lists them as cards in one section, apps first, and leaves the section out while there are none. |
+| `site/templates/` | The page layouts. `partials/` holds the galley drawings, the card on the home page and the small icons. |
 | `site/static/` | Copied to the site as is: the stylesheet, the fonts with their licenses, the icons and the link-preview picture. |
 | `site/examples/businesses.json` | A made-up app and a made-up business, used only for previews. |
 | `build.py` | Makes `docs/` from everything above. Python 3.9 or newer, nothing to install. |
 | `tools/render-images.js` | Redraws the icons and the link-preview picture. |
+| `tools/proreta-walkthrough.html`, `tools/render-walkthrough.js` | Proreta's walkthrough picture, drawn as a page with made-up people, and the script that turns it into the pictures on Proreta's page and card. |
+| `tools/fonts/` | Charis SIL, the walkthrough drawing's serif (SIL Open Font License, its text beside it). Only the drawing uses it; the site doesn't. |
 | `docs/` | The finished site that GitHub Pages serves. Each build replaces it, so never edit it by hand. |
 
 ## Change something
@@ -30,11 +32,11 @@ To look first, build a preview and open its `index.html` in a browser:
 python3 build.py --preview /tmp/palmulae-preview --example --check
 ```
 
-`--example` adds the two made-up businesses, so the business section and pages show.
+`--example` adds the two made-up businesses, so the home page shows more than one card.
 A preview has a note at the top and links that work straight from the folder. It never touches `docs/`.
 
-After changing the name, the tagline or the Latin line, redraw the pictures with
-`node tools/render-images.js` (needs Node and Playwright), then build again.
+After changing the name, the headline, the sentence under it or the apps on the home page, redraw the
+pictures with `node tools/render-images.js` (needs Node and Playwright), then build again.
 
 ## Add an app or business
 
@@ -46,9 +48,14 @@ Add an entry to `site/businesses.json`. Only the first five fields are required.
     "slug": "harbor",
     "name": "Harbor",
     "line": "One sentence on what it does.",
-    "colors": ["navy", "gold"],
+    "accent": "navy",
     "status": "live",
     "kind": "app",
+    "icon": "harbor/icon.svg",
+    "preview": {
+      "src": "harbor/preview.webp", "src_dark": "harbor/preview-dark.webp", "width": 1280, "height": 950,
+      "alt": "What the preview shows."
+    },
     "about": ["A paragraph on who it's for.", "Another, if needed."],
     "url": "https://harbor.example.com/",
     "url_label": "Open Harbor",
@@ -83,10 +90,14 @@ Add an entry to `site/businesses.json`. Only the first five fields are required.
 ```
 
 - `slug` is the page address, `palmulae.com/harbor/`: lowercase letters, numbers and hyphens.
-- `colors` are the blade, then its stripe: two of `navy`, `sage`, `maroon`, `gold`, `white`.
-- `status` is `live`, `soon` for a "Coming soon" card, or `wip` for a "Work in progress" one.
-- `kind` is `app` or `business` (the default), and decides which section of the home page lists it:
-  Apps or Businesses. Their headings and the sentence under each are in `site/site.json`.
+- `accent` is its own color, on its card and its page: `mint`, `navy`, `maroon` or `gold`. Each has a
+  color for words and a soft one for panels, in light and dark, at the top of the stylesheet.
+- `status` is `live`, `soon` for a "Coming soon" card, or `wip` for an "In development" one.
+- `kind` is `app` or `business` (the default). The home page lists apps first.
+- `icon` is its own square SVG icon in `site/static/assets/`, shown on its card and beside its name.
+  Without one, its card shows its first letter on a tile of its color.
+- `preview` is the glimpse of the product on its card on the home page, set on a panel of its color
+  and cropped at the right and bottom: a picture like `image` below, without the caption.
 - `url` is the business's own site or app, if it has one. Without one, its page here is its home.
 - `contact` defaults to the site's address.
 - `"unlisted": true` keeps it off the home page and out of the sitemap, and asks search engines not to list
@@ -102,6 +113,25 @@ Add an entry to `site/businesses.json`. Only the first five fields are required.
   companies' logos, which need their owners' permission.
 - `sections` adds short titled sections after the cards, and `fine_print` a small line at the bottom,
   for trademark notes.
+- A page can open with a `headline`, the benefit in a big line, with the icon and name small above it.
+  Then `about`, a `delivery` line on how people will get it, `status_label` and `status_note` (where it
+  stands, such as "Private prototype" and "Public release planned"), and `actions`: buttons as
+  `{ "label": ..., "href": ..., "style": "primary" }`, where `href` may be `#` and the id of a block.
+  Keep one `primary` button, the main next step; the rest are plain.
+- `blocks` are the titled sections after the opening, in order. Each has a `kind`, a `heading`, and
+  optionally an `id`, a big `title`, an `intro`, a `legend` of tags and a `note` under it.
+  - `figure`: an `image`, numbered `notes` that match numbers drawn on the picture, and `more`, a
+    second picture behind a click (`{ "summary": ..., "image": ... }`). An image can have small-screen
+    versions for phones: `src_small`, `src_small_dark`, `small_width` and `small_height`.
+  - `cards`: `items` with an `icon`, a `title`, `text` and `points`, short lines grouped by their tags.
+  - `steps`: numbered `items`, each a `title` and `text`.
+  - `rows`: `items`, each a `title`, `text` and an optional `tag`, in one column or two (`"cols": 2`).
+  - `flow`: boxes with arrows between them, each with a `title`, `items`, the `via` label on the arrow
+    into it, and a `style`: `home` (outlined) or `optional` (dashed, behind a dashed arrow).
+  - `prose`: `paragraphs`.
+  Tags say whether something works yet or what a requirement is: `now` (Working now), `progress`
+  (In progress), `planned`, `required`, `optional`, `provisional`, `built` (Built in) and `setup`
+  (Prototype setup).
 - `privacy` and `terms` make `palmulae.com/harbor/privacy/` and `palmulae.com/harbor/terms/`,
   the addresses app stores and sign-in providers ask for. In any `collects`, `uses`, `shares` or
   `choices`, one piece of text makes a paragraph and a list makes bullet points.

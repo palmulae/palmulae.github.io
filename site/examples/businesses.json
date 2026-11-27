@@ -7,7 +7,7 @@
       "A short paragraph on who it's for and what it does. This business is made up, to show how a page looks.",
       "A second paragraph, if it needs one."
     ],
-    "colors": ["navy", "gold"],
+    "accent": "navy",
     "status": "live",
     "kind": "app",
     "url": "https://example.com/",
@@ -67,7 +67,7 @@
     "about": [
       "A business that isn't open yet gets a page too, marked Coming soon. This one is made up as well."
     ],
-    "colors": ["sage", "navy"],
+    "accent": "maroon",
     "status": "soon"
   }
 ]

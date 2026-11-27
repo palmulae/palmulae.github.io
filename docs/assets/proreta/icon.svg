@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Proreta">
+  <!-- Proreta's mark: three offset panels, for texts, email and calendar, forming a P on a mint tile. -->
+  <rect width="64" height="64" rx="14" fill="#CDEBDD"/>
+  <rect x="28" y="10" width="24" height="24" rx="7" fill="#86C9B2"/>
+  <rect x="21" y="15" width="24" height="23" rx="7" fill="#2F7D69" stroke="#CDEBDD" stroke-width="2"/>
+  <rect x="26" y="22" width="11" height="9" rx="3" fill="#CDEBDD"/>
+  <path d="M13 21.5a6.5 6.5 0 0 1 13 0v26a6.5 6.5 0 0 1-6.5 6.5h-5a1.5 1.5 0 0 1-1.5-1.5z" fill="#1C5A50" stroke="#CDEBDD" stroke-width="2"/>
+</svg>

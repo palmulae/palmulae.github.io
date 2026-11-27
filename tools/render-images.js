@@ -2,8 +2,9 @@
 //   site/static/assets/og-image.png   the picture shown when someone shares a link (1200 x 630)
 //   site/static/apple-touch-icon.png  the icon for a phone's home screen (180 x 180)
 //   site/static/favicon.ico           the browser-tab icon for older browsers (16, 32 and 48)
-// The pictures use the site's own stylesheet, fonts and drawings.
-// Run it again after changing the name, the tagline, the Latin line or the drawings:
+// The pictures use the site's own stylesheet, fonts and drawings, and the icons of the apps listed in
+// site/businesses.json. Run it again after changing the name, the headline, the line under it, the drawings
+// or the listed apps:
 //   node tools/render-images.js
 // Needs Node and Playwright with Chromium.
 
@@ -17,39 +18,44 @@ const root = path.resolve(__dirname, '..');
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 const site = JSON.parse(read('site/site.json'));
 const mark = read('site/templates/partials/mark.svg');
-const blade = read('site/templates/partials/blade.svg');
-const bladeDefs = read('site/templates/partials/blade-defs.svg');
+const galley = read('site/templates/partials/galley.svg');
 const favicon = read('site/static/favicon.svg');
 const css = pathToFileURL(path.join(root, 'site/static/assets/site.css')).href;
+const asset = file => pathToFileURL(path.join(root, 'site/static/assets', file)).href;
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// Links written [like this](https://...) in site.json show as their words.
+const plain = s => String(s).replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
 const page = (style, body) => `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <link rel="stylesheet" href="${css}"><style>html, body { margin: 0; } p { margin: 0; } ${style}</style></head>
-<body>${bladeDefs}${body}</body></html>`;
+<body>${body}</body></html>`;
 
-// Blades in a rack, painted like the business cards.
-const rack = [['navy', 'gold'], ['sage', 'navy'], ['maroon', 'white'], ['gold', 'maroon'], ['navy', 'white']];
+// The apps on the home page, apps before businesses, up to three: each with its icon and name.
+const listed = JSON.parse(read('site/businesses.json')).filter(b => !b.unlisted);
+const projects = [...listed.filter(b => b.kind === 'app'), ...listed.filter(b => b.kind !== 'app')].slice(0, 3);
+const tiles = projects.map(b => `<figure class="app" style="--app: var(--app-${b.accent}); --app-soft: var(--app-${b.accent}-soft)">${
+  b.icon ? `<img src="${asset(b.icon)}" alt="">` : `<span class="letter">${esc(b.name[0].toUpperCase())}</span>`
+}<figcaption>${esc(b.name)}</figcaption></figure>`).join('');
 
 const ogHtml = page(`
 body { width: 1200px; height: 630px; overflow: hidden; }
-.card { position: relative; width: 1200px; height: 630px; padding: 64px 0 0 88px; }
-.card .mark { width: 250px; display: block; margin-left: -10px; }
-.name { margin-top: 10px; font-family: var(--font-display); font-weight: 500; font-size: 176px; line-height: .82; letter-spacing: -.015em; }
-.entry { margin-top: 30px; display: flex; align-items: baseline; gap: 22px; color: var(--ink-soft); }
-.hw { font-family: var(--font-mono); font-size: 23px; letter-spacing: .08em; color: var(--ink); }
-.pos { font-family: var(--font-display); font-style: italic; font-size: 30px; }
-.def { font-size: 25px; }
-.line { margin-top: 30px; font-family: var(--font-display); font-style: italic; font-weight: 500; font-size: 58px; line-height: 1.05; }
-.rack { position: absolute; right: 72px; top: 92px; display: grid; gap: 16px; }
-.rack .blade { width: 290px; }
-.rule { position: absolute; left: 88px; right: 88px; bottom: 52px; border-top: 1.5px solid var(--ink); padding-top: 14px;
+.card { position: relative; width: 1200px; height: 630px; padding: 60px 88px 0; }
+.brand { display: flex; align-items: center; gap: 16px; font-family: var(--font-display); font-weight: 600; font-size: 44px; line-height: 1; }
+.brand .galley { width: 64px; height: auto; margin-top: -6px; }
+.headline { margin-top: 58px; max-width: 760px; font-family: var(--font-display); font-weight: 500; font-size: 112px; line-height: .93; letter-spacing: -.018em; }
+.lede { margin-top: 30px; max-width: 640px; font-size: 27px; line-height: 1.45; color: var(--ink-soft); }
+.apps { position: absolute; right: 88px; top: 132px; display: flex; gap: 28px; }
+.app { margin: 0; display: grid; justify-items: center; gap: 16px; }
+.app img, .app .letter { display: grid; place-items: center; width: 168px; height: 168px; border-radius: 23%; }
+.app .letter { background: var(--app-soft); color: var(--app); font-weight: 700; font-size: 84px; }
+.app figcaption { font-weight: 600; font-size: 30px; letter-spacing: -.015em; }
+.rule { position: absolute; left: 88px; right: 88px; bottom: 50px; border-top: 1.5px solid var(--ink); padding-top: 14px;
   font-family: var(--font-mono); font-weight: 500; font-size: 19px; letter-spacing: .16em; text-transform: uppercase; }
 `, `<div class="card">
-  ${mark}
-  <p class="name">${esc(site.name)}</p>
-  <p class="entry"><span class="hw">${esc(site.entry.headword)}</span><span class="pos">${esc(site.entry.label)}</span><span class="def">${esc(site.entry.definition)}</span></p>
-  <p class="line">${esc(site.tagline)}</p>
-  <div class="rack">${rack.map(([a, b]) => `<div style="--c1: var(--blade-${a}); --c2: var(--blade-${b})">${blade}</div>`).join('')}</div>
+  <p class="brand">${galley}<span>${esc(site.name)}</span></p>
+  <p class="headline">${esc(plain(site.headline))}</p>
+  <p class="lede">${esc(plain(site.lede))}</p>
+  <div class="apps">${tiles}</div>
   <div class="rule">${esc(site.domain)}</div>
 </div>`);
 

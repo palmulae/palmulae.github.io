@@ -2,55 +2,411 @@
   {
     "slug": "proreta",
     "name": "Proreta",
-    "line": "A private command center for your texts, email and calendar.",
-    "description": "Proreta is a private command center for your texts, email and calendar that runs on your own computers at home.",
-    "colors": ["sage", "navy"],
+    "line": "Your texts, email, and calendar, in one private workspace.",
+    "description": "Proreta brings your texts, email, and calendar together around each person. A private prototype, being built for open-source, self-hosted use.",
+    "accent": "mint",
+    "icon": "proreta/icon.svg",
     "status": "wip",
     "kind": "app",
+    "headline": "Keep up with the people in your life.",
     "about": [
-      "Proreta brings your texts, email and calendar into one place, so nothing that needs an answer slips by. It's built for privacy-minded people, including anyone thinking about running local AI on their email."
+      "Proreta brings texts, email, and calendar context together around each person, helping you remember details, track commitments, and prepare replies."
     ],
-    "image": {
-      "src": "proreta/command-center-light.webp",
-      "src_dark": "proreta/command-center-dark.webp",
-      "width": 1920,
-      "height": 1080,
-      "alt": "Proreta's command center: everyone you talk to in a list on the left, a text conversation in the middle, and that person's settings, notes and to-dos on the right.",
-      "caption": "The command center prototype, shown with made-up people and messages."
-    },
-    "features": [
+    "delivery": "Being built for open-source, self-hosted use, with AI-guided installation.",
+    "status_label": "Private prototype",
+    "status_note": "Public release planned",
+    "actions": [
       {
-        "heading": "What makes it different",
+        "label": "See how it works",
+        "href": "#walkthrough",
+        "style": "primary"
+      },
+      {
+        "label": "Setup and requirements",
+        "href": "#setup"
+      }
+    ],
+    "preview": {
+      "src": "proreta/preview-light.webp",
+      "src_dark": "proreta/preview-dark.webp",
+      "width": 1280,
+      "height": 952,
+      "alt": "Proreta's morning briefing: a made-up friend, Nora, is waiting on a reply about Saturday's dinner, with the plan from the calendar and a drafted reply."
+    },
+    "blocks": [
+      {
+        "kind": "figure",
+        "id": "walkthrough",
+        "heading": "See how it works",
+        "title": "Nora texts for an address you emailed last week.",
+        "legend": [
+          "now",
+          "progress",
+          "planned"
+        ],
+        "image": {
+          "src": "proreta/walkthrough-light.webp",
+          "src_dark": "proreta/walkthrough-dark.webp",
+          "width": 2080,
+          "height": 1254,
+          "src_small": "proreta/walkthrough-small-light.webp",
+          "src_small_dark": "proreta/walkthrough-small-dark.webp",
+          "small_width": 800,
+          "small_height": 1772,
+          "alt": "An illustration of Proreta with made-up people. On the left, Nora Lindqvist's thread: your email inviting Nora and Sam to dinner on Saturday the 28th at 24 Alder Lane, apartment 3B, an email reply, and a text from Nora asking for the address again. On the right, the morning briefing: Nora has been waiting on you since Tuesday at 9:12 AM, the dinner is on your calendar, and a draft reply with the address is ready to copy, edit, or make shorter or warmer.",
+          "caption": "Drawn in Proreta's own look. Everyone and everything in it is made up."
+        },
+        "notes": [
+          {
+            "title": "Texts and email in one thread",
+            "text": "Nora's question came by iMessage, and your invitation went by email. Both sit in one thread, because Proreta matched Nora's phone number and email address to one person.",
+            "tag": "now"
+          },
+          {
+            "title": "Who's waiting, and what's coming up",
+            "text": "The morning briefing notes that Nora is waiting on you, and finds Saturday's dinner on your calendar.",
+            "tag": "progress"
+          },
+          {
+            "title": "A reply ready for review",
+            "text": "A draft written on your own computers, in your own style. Edit it, or ask for it shorter or warmer, then copy it into Messages. Sending from Proreta, with a touch of your YubiKey, is planned.",
+            "tag": "progress"
+          }
+        ],
+        "more": {
+          "summary": "See a whole screen of the prototype",
+          "image": {
+            "src": "proreta/command-center-light.webp",
+            "src_dark": "proreta/command-center-dark.webp",
+            "width": 1920,
+            "height": 1080,
+            "alt": "Proreta's prototype: everyone you talk to in a list on the left, a text conversation in the middle, and that person's settings, notes and to-dos on the right.",
+            "caption": "A real screen from the prototype, with made-up people and messages."
+          }
+        }
+      },
+      {
+        "kind": "cards",
+        "id": "what-it-does",
+        "heading": "What it does",
+        "legend": [
+          "now",
+          "progress",
+          "planned"
+        ],
         "items": [
-          { "icon": "message", "title": "iMessage too", "text": "A helper on your own Mac brings in your iMessage and SMS threads, right next to your email. Email-only assistants never see them." },
-          { "icon": "inbox", "title": "One place, by person", "text": "Texts, email and calendar in one place, organized around the people in your life instead of by app." },
-          { "icon": "contact", "title": "Contacts that connect", "text": "Each person's phone numbers and email addresses are matched, so everything from them lands on one page." },
-          { "icon": "circles", "title": "Knows who's who", "text": "People are grouped as family, close friends, friends or professional, suggested from your texts and confirmed by you. Businesses get their own tab." },
-          { "icon": "note", "title": "Remembers the details", "text": "Notes, to-dos and facts for each person. Facts it picks up from your texts wait for your OK." },
-          { "icon": "sparkle", "title": "Help, person by person", "text": "For each person, choose Watch, Remind or Draft: from keeping track, to reminders, to replies drafted for your review." }
+          {
+            "icon": "contact",
+            "title": "One view of each person",
+            "text": "Texts, email, and plans for each person in one place, organized around the people in your life instead of by app.",
+            "points": [
+              {
+                "text": "iMessage and SMS, read by a small helper on your Mac",
+                "tag": "now"
+              },
+              {
+                "text": "Gmail, with read-only access",
+                "tag": "now"
+              },
+              {
+                "text": "Phone numbers and email addresses matched to one person",
+                "tag": "now"
+              },
+              {
+                "text": "Circles: family, close friends, friends, and professional",
+                "tag": "now"
+              },
+              {
+                "text": "Plans from Google Calendar",
+                "tag": "progress"
+              },
+              {
+                "text": "Group chats in a list of their own",
+                "tag": "progress"
+              },
+              {
+                "text": "Calls",
+                "tag": "progress"
+              },
+              {
+                "text": "WhatsApp and Messenger",
+                "tag": "planned"
+              }
+            ]
+          },
+          {
+            "icon": "note",
+            "title": "Remember what matters",
+            "text": "Proreta keeps track of who's waiting on you, what's coming up, and what you know about each person.",
+            "points": [
+              {
+                "text": "Who's waiting on you, and since when",
+                "tag": "progress"
+              },
+              {
+                "text": "A short briefing each morning",
+                "tag": "progress"
+              },
+              {
+                "text": "Notes and facts for each person; facts it picks up wait for your OK",
+                "tag": "progress"
+              },
+              {
+                "text": "Catch-up and birthday reminders",
+                "tag": "progress"
+              },
+              {
+                "text": "Reminders you set by asking",
+                "tag": "planned"
+              }
+            ]
+          },
+          {
+            "icon": "sparkle",
+            "title": "Choose how much help you want",
+            "text": "For each person, choose Watch to keep track, Remind for reminders, or Draft for reminders with replies to review. Separately, decide whether a cloud AI may read them at all.",
+            "points": [
+              {
+                "text": "Watch, Remind, or Draft, set person by person",
+                "tag": "now"
+              },
+              {
+                "text": "Cloud AI access, cleared person by person with your YubiKey",
+                "tag": "now"
+              },
+              {
+                "text": "Reminder cards for people on Remind",
+                "tag": "progress"
+              },
+              {
+                "text": "Replies drafted at home for people on Draft",
+                "tag": "progress"
+              },
+              {
+                "text": "Drafts from the cloud AI for people you've cleared",
+                "tag": "planned"
+              },
+              {
+                "text": "Sending from Proreta, with a touch of your YubiKey",
+                "tag": "planned"
+              }
+            ]
+          }
         ]
       },
       {
-        "heading": "Privacy and security",
+        "kind": "steps",
+        "id": "setup",
+        "heading": "Setup",
+        "title": "Guided installation, step by step",
+        "intro": "Proreta is meant to be installed with an AI assistant at your side. It explains each step in plain words, runs the checks, and helps when one doesn't pass. The prototype is installed this way today, one stage at a time; the public installer is planned.",
         "items": [
-          { "icon": "home", "title": "Kept at home", "text": "What it reads is kept on your own computers. Money and health content is handled only by a local AI model, and you choose what, if anything, a cloud AI may read." },
-          { "icon": "lock", "title": "Read-only access", "text": "It reads Gmail and Google Calendar with Google's read-only access, so it can't send, change or delete mail or events." },
-          { "icon": "key", "title": "Hardware key", "text": "Opening it, and raising anyone's AI access, need a touch of your YubiKey." },
-          { "icon": "globe-off", "title": "Off the internet", "text": "It has no public address. It's reachable only at home or over a VPN, and always over HTTPS." },
-          { "icon": "network", "title": "Network isolation", "text": "It runs on its own walled-off part of your home network." },
-          { "icon": "stop", "title": "Emergency stop", "text": "One STOP switch pauses everything at once." }
+          {
+            "title": "Check your setup",
+            "text": "A first check says whether your computers and accounts meet the requirements below, before anything is installed."
+          },
+          {
+            "title": "Install, and choose privacy settings",
+            "text": "Each part installs on its own computer. Along the way you choose how strict to be, such as which people never leave your own computers."
+          },
+          {
+            "title": "Connect accounts and approve access",
+            "text": "Give Gmail and Google Calendar read-only access, let the Mac helper read Messages, and register your YubiKey."
+          },
+          {
+            "title": "Check it works, then meet your people",
+            "text": "Built-in checks confirm that every part is reading, nothing was marked as read, and nothing was sent. Then a guided session walks you through the people you message most."
+          }
         ]
-      }
-    ],
-    "sections": [
+      },
       {
-        "heading": "Status",
-        "paragraphs": [
-          "The current prototype is intended for the developer's own accounts, and no one else signs in to it. Later, Proreta may be offered as a package with guided instructions, so you can install your own copy at home."
+        "kind": "rows",
+        "id": "requirements",
+        "heading": "Requirements",
+        "intro": "What the prototype runs on today. The public release's requirements aren't settled yet.",
+        "legend": [
+          "required",
+          "optional",
+          "provisional"
+        ],
+        "cols": 2,
+        "items": [
+          {
+            "title": "A Mac at home",
+            "tag": "required",
+            "text": "iMessage and SMS can only be read on a Mac signed in to your Apple account, so one has to stay on at home. The prototype uses a Mac mini."
+          },
+          {
+            "title": "A security key",
+            "tag": "required",
+            "text": "Opening Proreta, and every step that loosens privacy, needs a touch of a security key such as a YubiKey. Two are best, one as a spare."
+          },
+          {
+            "title": "A computer for the local AI model",
+            "tag": "provisional",
+            "text": "Sorting, the briefing, and drafts run on an AI model at home. The prototype uses a mini PC with 128 GB of memory, shared with its graphics."
+          },
+          {
+            "title": "An always-on home server",
+            "tag": "provisional",
+            "text": "Stores everything and serves Proreta's page. The prototype uses a Synology NAS, beside a small mini PC that reads mail and calendars."
+          },
+          {
+            "title": "Accounts it reads",
+            "text": "Messages on your Mac, and Gmail with read-only access; Google Calendar, also read-only, is being added. Other email and calendar services aren't supported yet."
+          },
+          {
+            "title": "Where you use it",
+            "text": "In a browser on your own computers, on your home network. Use away from home and a phone version are planned."
+          },
+          {
+            "title": "A VPN",
+            "tag": "optional",
+            "text": "Only needed to reach your home computers from elsewhere, for example to install an update while traveling. Proreta itself has no public address."
+          },
+          {
+            "title": "A separate network",
+            "tag": "optional",
+            "text": "Recommended, not required: Proreta's computers on their own walled-off part of your home network. The prototype runs this way."
+          }
         ]
+      },
+      {
+        "kind": "rows",
+        "id": "after-setup",
+        "heading": "After setup",
+        "cols": 2,
+        "items": [
+          {
+            "title": "Updates",
+            "tag": "now",
+            "text": "Each update checks itself before and after it installs, and keeps a way back to the version before."
+          },
+          {
+            "title": "Backups",
+            "tag": "now",
+            "text": "A snapshot of Proreta's data is taken before every update and kept until the next one passes. Regular backups of your server stay up to you."
+          },
+          {
+            "title": "Troubleshooting",
+            "tag": "now",
+            "text": "A status line names anything late: a reader that stopped, a disk filling up, or a certificate near its end. Each install's checks print plain PASS or FAIL lines that an AI assistant can walk through with you."
+          },
+          {
+            "title": "Removing it",
+            "text": "Removing Proreta's access in your Google account stops all reading of mail and calendars at once. What it kept stays in its folders on your own computers, for you to keep or delete."
+          }
+        ]
+      },
+      {
+        "kind": "flow",
+        "id": "privacy",
+        "heading": "Privacy and data flows",
+        "title": "What Proreta reads stays on your computers at home.",
+        "intro": "A cloud AI is optional. It ships switched off, and you decide, person by person, what it may read.",
+        "items": [
+          {
+            "title": "Your accounts",
+            "items": [
+              "Messages, on your Mac",
+              "Gmail, read-only",
+              "Google Calendar, read-only"
+            ]
+          },
+          {
+            "title": "Your computers at home",
+            "via": "read-only",
+            "style": "home",
+            "items": [
+              "Everything is stored here",
+              "A local AI model sorts, summarizes, and drafts",
+              "Money and health messages never leave"
+            ]
+          },
+          {
+            "title": "Cloud AI, optional",
+            "via": "if you allow",
+            "style": "optional",
+            "items": [
+              "Shut until you open it",
+              "Only people you've cleared",
+              "Stand-ins for numbers and addresses"
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "rows",
+        "id": "enforced",
+        "heading": "How the limits are enforced",
+        "items": [
+          {
+            "title": "Not publicly accessible",
+            "text": "Proreta has no public address. Its page answers only your own computers on your home network, always over HTTPS with certificates made at home, and only after a touch of your YubiKey."
+          },
+          {
+            "title": "Read-only access",
+            "text": "It reads Gmail, and soon Google Calendar, with Google's read-only permissions, so it can't send, change, or delete mail or events. Unread messages stay unread."
+          },
+          {
+            "title": "Money and health stay home",
+            "text": "As each message arrives, your own computers check it against fixed lists of money and health words. A match, or a maybe, marks it, and a mark is only ever added, never taken off. The rule that decides what may go to a cloud AI refuses anything marked, and it runs where your messages are stored, not in the page."
+          },
+          {
+            "title": "The cloud AI connection",
+            "text": "It ships shut, and only you can open it, at your home server: no page or script can. Once it's open, everything that leaves is logged word for word, and the words are kept for 30 days. The prototype's cloud AI is Claude, from Anthropic."
+          },
+          {
+            "title": "What a cloud AI may receive",
+            "text": "Messages with people you've cleared one by one with your YubiKey, with phone numbers, email addresses, and street addresses swapped for stand-ins. A message with a number of four or more digits, or one of your code words, is never sent. In the current design, email, group chats, calls, photos, and anything marked stay home."
+          },
+          {
+            "title": "A touch of your key",
+            "text": "Opening Proreta, clearing a person for the cloud AI, and later sending a message each need a touch of your YubiKey, checked where your messages are stored."
+          },
+          {
+            "title": "An emergency stop",
+            "text": "Texting STOP pauses everything at once."
+          },
+          {
+            "title": "A walled-off network",
+            "tag": "setup",
+            "text": "In the prototype, Proreta's computers sit on their own walled-off part of the home network. The software doesn't need this; the guide will recommend it."
+          }
+        ],
+        "note": "When the source is published, each of these points will link to the code and documentation behind it. Published code lets you check how Proreta works; it doesn't prove every claim by itself.",
+        "intro": "Each of these is built into the software, except the last, which is how the prototype is set up."
+      },
+      {
+        "kind": "rows",
+        "id": "status",
+        "heading": "Where it stands",
+        "items": [
+          {
+            "title": "Today",
+            "tag": "now",
+            "text": "A private prototype has run at the developer's home since November 2026, for the developer's own accounts: texts and email by person, circles, the Watch, Remind, and Draft setting, cloud AI access set person by person, and sign-in with a YubiKey."
+          },
+          {
+            "title": "Next",
+            "tag": "progress",
+            "text": "Calendar plans and who's waiting, the morning briefing, notes and facts, calls, and replies drafted at home. Each part is tested on made-up data before it's installed."
+          },
+          {
+            "title": "Later",
+            "tag": "planned",
+            "text": "Opening the cloud AI for people you've cleared, sending from Proreta, reminders, search, WhatsApp and Messenger, a phone version, and the public installer."
+          },
+          {
+            "title": "Source code",
+            "tag": "planned",
+            "text": "To be published as open source with the public release."
+          }
+        ],
+        "note": "Want to hear when it's ready? Write to [info@palmulae.com](mailto:info@palmulae.com)."
       }
     ],
-    "fine_print": "Gmail and Google Calendar are trademarks of Google LLC. YubiKey is a registered trademark of Yubico AB. iMessage and Mac are trademarks of Apple Inc.",
+    "fine_print": "Gmail and Google Calendar are trademarks of Google LLC. YubiKey is a registered trademark of Yubico AB. iMessage, Mac and Mac mini are trademarks of Apple Inc. Claude is a trademark of Anthropic, PBC. WhatsApp and Messenger are trademarks of Meta Platforms, Inc. Synology is a trademark of Synology Inc.",
     "privacy": {
       "updated": "November 27, 2026",
       "intro": "This policy covers Proreta, a private command center that reads its owner's own messages, email and calendar. Only its owner signs in to it, with the owner's own accounts.",
@@ -79,8 +435,18 @@
         "Proreta is a private tool for its owner's own use. It isn't offered, sold or licensed to anyone else, and no one else may sign in to it."
       ],
       "sections": [
-        { "heading": "As is", "paragraphs": ["It's provided as is, with no promise that it works or stays available."] },
-        { "heading": "Changes", "paragraphs": ["These terms may change. The date above shows the latest version."] }
+        {
+          "heading": "As is",
+          "paragraphs": [
+            "It's provided as is, with no promise that it works or stays available."
+          ]
+        },
+        {
+          "heading": "Changes",
+          "paragraphs": [
+            "These terms may change. The date above shows the latest version."
+          ]
+        }
       ]
     }
   }

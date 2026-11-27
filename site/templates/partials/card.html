@@ -1,6 +1,8 @@
-    <li class="venture" style="--c1: var(--blade-${c1}); --c2: var(--blade-${c2})">
-      ${blade}
-      <h3><a href="${href}">${name}</a></h3>
-      <p>${line}</p>
-      ${status}
+    <li class="project" style="--app: var(--app-${accent}); --app-soft: var(--app-${accent}-soft)">
+      <div class="project-text">
+        <h3 class="project-name">${icon}<span>${name}</span></h3>
+        <p class="project-line">${line}</p>
+        <p class="project-foot"><span class="project-foot-row"><span class="stage">${stage}</span><a class="explore" href="${href}">Explore ${name}<span aria-hidden="true"> →</span></a></span></p>
+      </div>
+${preview}
     </li>

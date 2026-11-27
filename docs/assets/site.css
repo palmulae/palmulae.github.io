@@ -1,6 +1,6 @@
 /* Palmulae site styles.
-   Layout: the name set like a Latin lexicon entry under a Roman galley whose oars all pull one way, then a rack of
-   business cards, each painted in its own blade colors like oars on a boathouse wall.
+   Layout: a small studio's page. Palmulae speaks in its editorial serif under a small Roman galley; each app has
+   its own icon, its own accent color and a sans-serif name, and its card shows a glimpse of the product.
    Fonts are served from this site (assets/fonts), so visits reach no other company. */
 
 @font-face {
@@ -46,11 +46,15 @@
   --ink-soft: #4B5D5F;
   --rule: #D3DCD8;
   --accent: #1C5A50;
-  --blade-navy: #1E3D5E;
-  --blade-sage: #86AE9C;
-  --blade-maroon: #7B2F3A;
-  --blade-gold: #C29D3F;
-  --blade-white: #FBFCFB;
+  /* Each app's accent (build.py ACCENTS): a color for its words and lines, and a soft one for panels */
+  --app-mint: #1C5A50;
+  --app-mint-soft: #D9EFE6;
+  --app-navy: #1E3D5E;
+  --app-navy-soft: #DEE6F0;
+  --app-maroon: #7B2F3A;
+  --app-maroon-soft: #F2E1E3;
+  --app-gold: #7A5C14;
+  --app-gold-soft: #F4EAD0;
   --font-display: "Cormorant", "Cormorant Garamond", Garamond, "Times New Roman", serif;
   --font-body: "Instrument Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -64,11 +68,14 @@
     --ink-soft: #A3AAA7;
     --rule: #2C302E;
     --accent: #F2F5F3;
-    --blade-navy: #6F8FB6;
-    --blade-sage: #94BBA9;
-    --blade-maroon: #B8636F;
-    --blade-gold: #D2B15C;
-    --blade-white: #F2F5F3;
+    --app-mint: #8FD3C3;
+    --app-mint-soft: #16231F;
+    --app-navy: #9DB8DA;
+    --app-navy-soft: #172030;
+    --app-maroon: #E0A0A9;
+    --app-maroon-soft: #2A1A1D;
+    --app-gold: #DDBE6A;
+    --app-gold-soft: #28220F;
     color-scheme: dark;
   }
 }
@@ -79,11 +86,14 @@
   --ink-soft: #A3AAA7;
   --rule: #2C302E;
   --accent: #F2F5F3;
-  --blade-navy: #6F8FB6;
-  --blade-sage: #94BBA9;
-  --blade-maroon: #B8636F;
-  --blade-gold: #D2B15C;
-  --blade-white: #F2F5F3;
+  --app-mint: #8FD3C3;
+  --app-mint-soft: #16231F;
+  --app-navy: #9DB8DA;
+  --app-navy-soft: #172030;
+  --app-maroon: #E0A0A9;
+  --app-maroon-soft: #2A1A1D;
+  --app-gold: #DDBE6A;
+  --app-gold-soft: #28220F;
   color-scheme: dark;
 }
 
@@ -140,23 +150,38 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
   border-bottom: 1px solid var(--rule);
 }
 .bar-name {
-  font-family: var(--font-mono);
-  font-size: .8rem;
-  font-weight: 500;
-  letter-spacing: .2em;
-  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: .005em;
   color: var(--ink);
   text-decoration: none;
 }
+.bar-name .galley { width: 2.15rem; height: auto; margin-top: -.2rem; }
 .bar-links { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; font-size: .9rem; }
 .bar-links a { color: var(--ink-soft); text-decoration: none; }
 .bar-links a:hover { color: var(--ink); text-decoration: underline; }
 
-/* Home: hero */
-.hero { display: grid; gap: 1.1rem; justify-items: start; }
-.hero .mark { margin-bottom: .4rem; }
-/* The mark: a Roman galley, ram forward and stern curled, its bank of oars pulling as one.
-   On load the oars take one stroke and the galley surges ahead. */
+/* Home: the studio's line in the editorial serif, then what it is */
+.hero { display: grid; gap: 1.25rem; justify-items: start; }
+.headline {
+  margin: 0;
+  max-width: 13ch;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(3.3rem, 9.5vw, 6.5rem);
+  line-height: .94;
+  letter-spacing: -.018em;
+  text-wrap: balance;
+}
+.lede { margin: 0; max-width: 34rem; font-size: clamp(1.15rem, 2.4vw, 1.4rem); line-height: 1.5; color: var(--ink-soft); text-wrap: pretty; }
+
+/* The galley, as drawn for the share picture and the phone icon (tools/render-images.js): ram forward and
+   stern curled, its bank of oars pulling as one. */
 .mark { --cut: var(--paper); width: clamp(12rem, 32vw, 16rem); height: auto; color: var(--ink); overflow: visible; }
 .mark .hull, .mark .palm { fill: currentColor; }
 .mark .trim { fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; }
@@ -166,42 +191,6 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
 .mark .shield { fill: none; stroke: currentColor; stroke-width: 1.4; }
 .mark .wave { fill: none; stroke: currentColor; stroke-width: 1; stroke-linecap: round; opacity: .4; }
 .oar { transform-box: fill-box; transform-origin: 50% 0%; transform: rotate(32deg); }
-@media (prefers-reduced-motion: no-preference) {
-  .oar { animation: pull 1300ms cubic-bezier(.4, .1, .2, 1) 250ms both; }
-  .ship { animation: surge 1700ms cubic-bezier(.3, .6, .2, 1) 250ms both; }
-}
-@keyframes pull { from { transform: rotate(-26deg); } }
-@keyframes surge { from { transform: translateX(-12px); } }
-
-.wordmark {
-  margin: .25rem 0 0;
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: clamp(4rem, 15vw, 9.5rem);
-  line-height: .85;
-  letter-spacing: -.015em;
-}
-.entry {
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: .25rem 1rem;
-  color: var(--ink-soft);
-}
-.entry .hw { font-family: var(--font-mono); font-size: .85rem; letter-spacing: .08em; color: var(--ink); }
-.entry .pos { font-family: var(--font-display); font-style: italic; font-size: 1.2rem; }
-.entry .def { font-size: .95rem; }
-.tagline {
-  margin: .9rem 0 0;
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 500;
-  font-size: clamp(1.8rem, 4.5vw, 2.6rem);
-  line-height: 1.1;
-  text-wrap: balance;
-}
-.lede { margin: 0; max-width: 34rem; font-size: 1.125rem; color: var(--ink-soft); text-wrap: pretty; }
 
 /* Sections */
 .section { display: grid; gap: 1.5rem; }
@@ -216,54 +205,99 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
 }
 .section-head p { margin: 0; max-width: 40rem; color: var(--ink-soft); font-size: .95rem; }
 
-/* Business cards */
-.ventures {
+/* What's being built: a card for each app or business, with its icon, its name in the sans, one line,
+   where it stands, and a glimpse of the product on a panel of its own color */
+.projects {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
 }
-@media (max-width: 640px) { .ventures { grid-template-columns: minmax(0, 1fr); } }
-.venture {
+.projects-one { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 700px) { .projects { grid-template-columns: minmax(0, 1fr); } }
+.project {
+  position: relative;
   min-width: 0;
   display: grid;
-  gap: .55rem;
-  align-content: start;
-  padding: 1.5rem 1.5rem 1.35rem;
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
   background: var(--card);
   border: 1px solid var(--rule);
-  border-radius: 3px;
+  border-radius: 8px;
 }
-.venture h3 {
-  margin: .6rem 0 0;
-  font-family: var(--font-display);
+.project:has(.explore:focus-visible) { outline: 2px solid var(--app); outline-offset: 3px; }
+.project-text { display: grid; gap: .8rem; align-content: start; padding: 1.6rem 1.6rem 1.5rem; }
+.project-name {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  font-family: var(--font-body);
   font-weight: 600;
-  font-size: 1.8rem;
-  line-height: 1.05;
+  font-size: 1.75rem;
+  line-height: 1.1;
+  letter-spacing: -.015em;
 }
-.venture h3 a { color: var(--ink); text-decoration: none; }
-.venture h3 a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
-.venture p { margin: 0; color: var(--ink-soft); }
-.venture .where {
-  margin-top: .3rem;
+.project-line { margin: 0; max-width: 28rem; font-size: 1.12rem; line-height: 1.5; text-wrap: pretty; }
+/* Where it stands, a dot, and the link. The row starts 1.5rem left of the clipped box, so when the link
+   wraps to a line of its own, its dot falls outside the box and only the link shows. */
+.project-foot { margin: .35rem 0 0; overflow: hidden; }
+.project-foot-row { display: flex; flex-wrap: wrap; align-items: baseline; row-gap: .35rem; margin-left: -1.5rem; }
+.stage {
+  margin-left: 1.5rem;
   font-family: var(--font-mono);
-  font-size: .8rem;
-  letter-spacing: .02em;
-  color: var(--accent);
+  font-size: .72rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
   overflow-wrap: anywhere;
 }
+.explore { font-weight: 600; color: var(--app); text-decoration: none; }
+.explore::before {
+  content: "·";
+  content: "·" / "";
+  display: inline-block;
+  width: 1.5rem;
+  text-align: center;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+.explore:focus-visible { outline: none; }
+/* The whole card opens the app's page */
+.explore::after { content: ""; position: absolute; inset: 0; z-index: 1; }
+.project:hover .explore { text-decoration: underline; text-underline-offset: .2em; }
+/* Stacked under the words, the whole preview shows, running off the right edge; beside them, it is
+   cropped at the bottom too */
+.project-preview { position: relative; overflow: hidden; padding: 1.75rem 0 1.75rem 1.75rem; background: var(--app-soft); }
+.project-preview picture { display: block; width: calc(100% + 1rem); }
+.project-preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px 0 0 0;
+  box-shadow: 0 1px 2px rgba(19, 35, 38, .08), 0 18px 40px -18px rgba(19, 35, 38, .35);
+}
+@media (min-width: 901px) {
+  .projects-one .project { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: none; }
+  .projects-one .project-text { align-content: center; padding: 2.25rem 2rem; }
+  .projects-one .project-name { font-size: 2.1rem; }
+  .projects-one .project-preview { min-height: 26rem; padding: 0; }
+  .projects-one .project-preview picture { position: absolute; left: 1.75rem; top: 1.75rem; }
+}
 
-/* Oar blades */
-.blade { display: block; width: 8rem; height: auto; overflow: visible; }
-.blade .shaft { stroke: var(--ink-soft); stroke-width: 2; stroke-linecap: round; }
-.blade .base { fill: var(--c1); }
-.blade .stripe { fill: var(--c2); }
-.blade .edge { fill: none; stroke: var(--ink); stroke-opacity: .3; stroke-width: .75; }
-.blade-turn { transform-box: fill-box; transform-origin: 0% 50%; transition: transform 450ms cubic-bezier(.2, .75, .25, 1); }
-@media (prefers-reduced-motion: no-preference) {
-  .venture:hover .blade-turn { transform: rotate(-6deg); }
+/* An app's icon: its own square picture, or its first letter on a tile of its color */
+.app-icon { flex: none; display: block; width: 3rem; height: 3rem; border-radius: 23%; }
+.app-icon-letter {
+  display: grid;
+  place-items: center;
+  background: var(--app-soft);
+  color: var(--app);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1.45rem;
+  line-height: 1;
 }
 
 .chip {
@@ -283,30 +317,32 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
 .contact-line {
   margin: 0;
   font-family: var(--font-display);
-  font-style: italic;
   font-size: clamp(1.4rem, 3.5vw, 1.9rem);
   color: var(--ink-soft);
   overflow-wrap: anywhere;
 }
 
-/* A business's own page: words in a readable column; the picture and the cards across the page */
-.biz { display: grid; gap: 1rem; justify-items: start; min-width: 0; }
+/* A business's own page: words in a readable column; the picture and the cards across the page.
+   Its links, buttons and marks take its own accent color. */
+.biz { --accent: var(--app); display: grid; gap: 1rem; justify-items: start; min-width: 0; }
 .biz > * { max-width: 44rem; }
 .biz > .shot, .biz > .biz-section, .biz > .biz-foot { width: 100%; max-width: none; }
-.biz .blade { width: 11rem; }
 .biz-about { font-size: 1.125rem; text-wrap: pretty; }
 .biz-name {
   margin: .5rem 0 0;
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: clamp(3rem, 10vw, 5.5rem);
-  line-height: .95;
-  text-wrap: balance;
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(2.4rem, 8vw, 3.75rem);
+  line-height: 1;
+  letter-spacing: -.02em;
 }
+.biz-name .app-icon { width: 1.15em; height: 1.15em; }
 .biz-line {
   margin: 0;
   font-family: var(--font-display);
-  font-style: italic;
   font-size: clamp(1.4rem, 3.5vw, 1.9rem);
   line-height: 1.2;
   color: var(--ink-soft);
@@ -419,16 +455,231 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
 .foot-links a { color: var(--ink-soft); }
 .foot-links a:hover { color: var(--ink); }
 
-/* Whole card is the link to the business's page */
-.venture { position: relative; }
-.venture h3 a::after { content: ""; position: absolute; inset: 0; border-radius: 3px; }
-.venture:has(h3 a:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
-.venture h3 a:focus-visible { outline: none; }
-.venture:hover { border-color: var(--ink-soft); }
-
 .biz-legal { margin: 0; display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; font-size: .9rem; }
 .biz-legal a { color: var(--ink-soft); }
 .biz-legal a:hover { color: var(--ink); }
+
+/* An app's opening, when it has a headline: its icon and name small, the benefit as the big line in the
+   editorial serif, then what it does, how people will get it, where it stands and where to go next. */
+.page:has(.biz-title) { gap: clamp(2rem, 5vw, 3rem); }
+.biz > .biz-hero { width: 100%; max-width: none; display: grid; gap: 1rem; justify-items: start; }
+.biz-hero > * { max-width: 44rem; }
+.biz-hero > .biz-title { max-width: 54rem; }
+.biz-title { margin: 0; display: grid; gap: .9rem; }
+.biz-kicker {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(1.35rem, 2.8vw, 1.6rem);
+  line-height: 1;
+  letter-spacing: -.015em;
+}
+.biz-kicker .app-icon { width: 2.6rem; height: 2.6rem; }
+.biz-headline {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.6rem, 7.2vw, 4.4rem);
+  line-height: 1;
+  letter-spacing: -.012em;
+  text-wrap: balance;
+}
+.biz-hero .biz-about { font-size: 1.2rem; line-height: 1.55; }
+.biz-delivery {
+  margin: 0;
+  padding-left: .85rem;
+  border-left: 2px solid var(--accent);
+  color: var(--accent);
+  font-size: 1.06rem;
+  font-weight: 500;
+  line-height: 1.45;
+}
+.biz-status { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .75rem; font-size: .95rem; color: var(--ink-soft); }
+.biz-status .chip { margin-top: 0; }
+.biz-hero .biz-links { margin-top: .4rem; }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Buttons: the darker teal is kept for the one main action */
+.action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: .55rem 1.15rem;
+  border: 1px solid var(--ink);
+  border-radius: 3px;
+  color: var(--ink);
+  font-weight: 500;
+  text-decoration: none;
+}
+.action:hover { background: var(--ink); color: var(--paper); }
+.action-primary { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+.action-primary:hover { background: color-mix(in srgb, var(--accent) 84%, var(--paper)); border-color: transparent; color: var(--paper); }
+
+/* Blocks: the titled sections of an app's page */
+.biz-hero + .biz-section { margin-top: 1.75rem; }
+.block-title {
+  margin: 0;
+  max-width: 46rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.6rem, 3.6vw, 2.15rem);
+  line-height: 1.1;
+  text-wrap: balance;
+}
+.block-intro { max-width: 44rem; font-size: 1.05rem; color: var(--ink-soft); }
+.block-note { max-width: 44rem; font-size: .9rem; color: var(--ink-soft); }
+.block .shot { margin-top: .25rem; }
+
+/* Tags: a dot that is full (working now), half full (in progress) or empty (planned), and a word */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  width: max-content;
+  max-width: 100%;
+  padding: .1rem .55rem .1rem .45rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: .66rem;
+  font-weight: 500;
+  letter-spacing: .08em;
+  line-height: 1.55;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink-soft);
+}
+.tag::before {
+  content: "";
+  flex: none;
+  width: .5rem;
+  height: .5rem;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+}
+.tag-now, .tag-built, .tag-required {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+.tag-now::before, .tag-built::before, .tag-required::before { background: currentColor; }
+.tag-progress { color: var(--ink); border-color: color-mix(in srgb, var(--ink) 35%, transparent); }
+.tag-progress::before { background: linear-gradient(90deg, currentColor 50%, transparent 50%); }
+.tag-planned, .tag-provisional, .tag-setup { border-style: dashed; border-color: var(--ink-soft); }
+.block .shot + .legend { margin-top: -.25rem; }
+.legend { margin: 0; display: flex; flex-wrap: wrap; gap: .5rem 1.4rem; font-size: .85rem; color: var(--ink-soft); }
+.legend-item { display: inline-flex; align-items: center; gap: .5rem; }
+
+/* A picture with numbered notes under it; the numbers match the ones drawn on the picture */
+.notes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem 1.75rem;
+}
+@media (max-width: 760px) { .notes { grid-template-columns: minmax(0, 1fr); } }
+.note { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .85rem; align-items: start; }
+.note-n {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--paper);
+  font-family: var(--font-mono);
+  font-size: .8rem;
+  font-weight: 500;
+}
+.note h3 { margin: .1rem 0 0; font-family: var(--font-display); font-weight: 600; font-size: 1.35rem; line-height: 1.15; }
+.note p { margin: .35rem 0 .6rem; font-size: .95rem; line-height: 1.55; color: var(--ink-soft); }
+.more { padding-top: .9rem; border-top: 1px solid var(--rule); }
+.more summary { width: max-content; max-width: 100%; cursor: pointer; color: var(--accent); font-weight: 500; }
+.more[open] summary { margin-bottom: .9rem; }
+.more .shot { margin: 0; }
+
+/* Cards with short points, grouped under their tags */
+.block-cards .feature h3 { font-size: 1.6rem; }
+.block-cards .feature > p { font-size: 1rem; color: var(--ink); }
+.feature-tag { margin: 0 0 .3rem; }
+.points { display: grid; gap: .9rem; margin-top: .8rem; padding-top: .95rem; border-top: 1px solid var(--rule); }
+.points-group { display: grid; gap: .45rem; }
+.points-head { margin: 0; }
+.points ul { margin: 0; padding-left: 1.05rem; display: grid; gap: .3rem; font-size: .92rem; line-height: 1.45; }
+.points li::marker { color: var(--ink-soft); }
+
+/* Numbered steps */
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr));
+  gap: 1.25rem 1.5rem;
+}
+@media (max-width: 860px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .steps { grid-template-columns: minmax(0, 1fr); } }
+.step { display: grid; align-content: start; gap: .4rem; padding-top: .75rem; border-top: 1px solid var(--ink); }
+.step-n { font-family: var(--font-display); font-weight: 500; font-size: 2.5rem; line-height: 1; color: var(--accent); }
+.step h3 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 1.35rem; line-height: 1.15; }
+.step p { margin: 0; font-size: .95rem; line-height: 1.55; color: var(--ink-soft); }
+
+/* Rows: a title and its tag, then a sentence or two */
+.rows { margin: 0; display: grid; border-bottom: 1px solid var(--rule); }
+.row { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); align-content: start; gap: .45rem 2rem; padding: 1rem 0; border-top: 1px solid var(--rule); }
+.row dt { display: flex; flex-direction: column; align-items: flex-start; gap: .45rem; }
+.row-title { font-family: var(--font-display); font-weight: 600; font-size: 1.3rem; line-height: 1.15; }
+.row dd { margin: 0; max-width: 42rem; font-size: .97rem; line-height: 1.55; color: var(--ink-soft); }
+.rows-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 2.5rem; }
+.rows-2 .row { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 760px) { .rows-2 { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 640px) { .row { grid-template-columns: minmax(0, 1fr); } }
+
+/* A flow: boxes in a row, with a labeled arrow into each; a dashed arrow is a gate that starts shut */
+.flow { display: flex; align-items: stretch; }
+.flow-box { flex: 1 1 0; min-width: 0; padding: 1.1rem 1.2rem 1.15rem; background: var(--card); border: 1px solid var(--rule); border-radius: 3px; }
+.flow-box h3 { margin: 0 0 .6rem; font-family: var(--font-mono); font-weight: 500; font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; }
+.flow-box ul { margin: 0; padding-left: 1rem; display: grid; gap: .3rem; font-size: .93rem; line-height: 1.45; }
+.flow-box-home { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.flow-box-optional { background: transparent; border-style: dashed; border-color: var(--ink-soft); }
+.flow-arrow { position: relative; flex: 0 0 8rem; display: flex; align-items: center; justify-content: center; margin: 0; padding: 0 .85rem 0 .45rem; text-align: center; }
+.flow-arrow::before { content: ""; position: absolute; left: .3rem; right: .4rem; top: 50%; border-top: 1px solid var(--ink-soft); }
+.flow-arrow::after {
+  content: "";
+  position: absolute;
+  right: .45rem;
+  top: 50%;
+  width: .55rem;
+  height: .55rem;
+  border-top: 1px solid var(--ink-soft);
+  border-right: 1px solid var(--ink-soft);
+  transform: translateY(-50%) rotate(45deg);
+}
+.flow-arrow-gate::before { border-top-style: dashed; }
+.flow-arrow span {
+  position: relative;
+  z-index: 1;
+  padding: .2rem .3rem;
+  background: var(--paper);
+  font-family: var(--font-mono);
+  font-size: .66rem;
+  letter-spacing: .06em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+@media (max-width: 760px) {
+  .flow { flex-direction: column; }
+  .flow-arrow { flex: 0 0 auto; min-height: 3.75rem; padding: .45rem 0 1rem; }
+  .flow-arrow::before { left: 50%; right: auto; top: .25rem; bottom: .55rem; border-top: 0; border-left: 1px solid var(--ink-soft); }
+  .flow-arrow-gate::before { border-left-style: dashed; }
+  .flow-arrow::after { right: auto; left: 50%; top: auto; bottom: .6rem; transform: translateX(-50%) rotate(135deg); }
+}
 
 /* Preview builds only (build.py --preview): a note that the page isn't live */
 .preview-note {

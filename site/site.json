@@ -2,20 +2,12 @@
   "name": "Palmulae",
   "domain": "palmulae.com",
   "email": "info@palmulae.com",
-  "description": "Palmulae is a home for new apps and businesses, all pulling in the same direction.",
-  "entry": {
-    "headword": "pal·mu·lae",
-    "label": "Latin, plural",
-    "definition": "the blades of oars"
-  },
-  "tagline": "Row together, go faster.",
-  "lede": "Palmulae is a home for new apps and businesses, all pulling in the same direction. Each new one adds another oar to the boat.",
-  "apps_heading": "Apps",
-  "apps_intro": "Each one has its own page here and its own colors, the way every rowing club paints its own blades.",
-  "businesses_heading": "Businesses",
-  "businesses_intro": "Each one has its own page here too, and its own seat in the boat.",
+  "description": "Palmulae is an independent studio for new apps, experiments, and businesses.",
+  "headline": "Building things worth using.",
+  "lede": "Palmulae is an independent studio for new apps, experiments, and businesses.",
+  "projects_heading": "What we're building",
   "copyright_since": 2026,
   "privacy_updated": "November 24, 2026",
   "terms_updated": "November 24, 2026",
-  "og_image_alt": "A Roman galley with its oars pulling as one, the name Palmulae, and the line Row together, go faster."
+  "og_image_alt": "The name Palmulae with its small Roman galley, the line Building things worth using., and the icon of Proreta, the app it is building."
 }

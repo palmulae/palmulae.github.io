@@ -22,16 +22,15 @@
 <link rel="icon" href="${root}favicon.ico" sizes="32x32">
 <link rel="icon" href="${root}favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="${root}apple-touch-icon.png">
-<link rel="stylesheet" href="${root}assets/site.css">
+<link rel="stylesheet" href="${root}assets/site.css?v=${css_version}">
 ${head_extra}
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-${svg_defs}
 ${banner}
 <div class="page">
   <nav class="bar" aria-label="Site">
-    <a class="bar-name" href="${home_link}">${site_name}</a>
+    <a class="bar-name" href="${home_link}">${galley}<span>${site_name}</span></a>
     <div class="bar-links">${nav_links}</div>
   </nav>
   <main class="main" id="main">

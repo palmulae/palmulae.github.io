@@ -17,6 +17,7 @@ Never edit docs/ by hand: each build replaces it.
 """
 
 import argparse
+import hashlib
 import html
 import json
 import re
@@ -36,13 +37,14 @@ STATIC = SITE / "static"
 DOCS = ROOT / "docs"
 MARKER = ".palmulae-build"
 
-PALETTE = ("navy", "sage", "maroon", "gold", "white")
+# Each app or business has one accent color of its own, named here. site.css gives each name two colors,
+# --app-<name> for words and lines and --app-<name>-soft for the panels behind them, in light and dark.
+ACCENTS = ("mint", "navy", "maroon", "gold")
 STATUSES = ("live", "soon", "wip")
 # The label on a card and its page while it isn't live.
-STATUS_CHIPS = {"soon": "Coming soon", "wip": "Work in progress"}
-# Apps and businesses get separate sections on the home page, in this order. Each kind's section
-# id, which is also the start of its heading and intro keys in site.json.
-KINDS = {"app": "apps", "business": "businesses"}
+STATUS_CHIPS = {"soon": "Coming soon", "wip": "In development"}
+# Apps come before businesses in the home page's list.
+KINDS = ("app", "business")
 # Folder names the site already uses, or that would confuse people, so no business gets them.
 RESERVED = {
     "404", "admin", "api", "app", "apple-touch-icon", "assets", "cname", "docs", "examples",
@@ -55,14 +57,46 @@ LINK_RE = re.compile(r"\[([^\]\n]+)\]\(([^)\s]+)\)")
 URL_CHARS_RE = re.compile(r"^[A-Za-z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+$")
 
 BUSINESS_KEYS = {
-    "slug": True, "name": True, "line": True, "colors": True, "status": True, "kind": False,
+    "slug": True, "name": True, "line": True, "accent": True, "status": True, "kind": False, "icon": False,
+    "preview": False,
     "about": False, "description": False, "url": False, "url_label": False,
     "links": False, "contact": False, "privacy": False, "terms": False, "unlisted": False,
     "image": False, "features": False, "sections": False, "fine_print": False,
+    "headline": False, "delivery": False, "status_label": False, "status_note": False,
+    "actions": False, "blocks": False,
 }
-IMAGE_KEYS = {"src": True, "src_dark": False, "width": True, "height": True, "alt": True, "caption": False}
+IMAGE_KEYS = {
+    "src": True, "src_dark": False, "width": True, "height": True, "alt": True, "caption": False,
+    "src_small": False, "src_small_dark": False, "small_width": False, "small_height": False,
+}
 IMAGE_TYPES = (".webp", ".png", ".jpg", ".jpeg", ".avif")
 IMAGE_PATH_RE = re.compile(r"^[a-z0-9][a-z0-9_-]*(?:/[a-z0-9][a-z0-9._-]*)*$")
+# A picture's "src_small" versions are shown on screens this wide or narrower.
+SMALL_SCREEN = 600
+# Small labels that say whether something works yet, or what a requirement is. Each draws as a tag
+# whose CSS class is its key (tag-now, tag-progress, ...). The second text is what a legend says beside it.
+TAGS = {
+    "now": ("Working now", "in the prototype today"),
+    "progress": ("In progress", "being built and tested"),
+    "planned": ("Planned", "not built yet"),
+    "required": ("Required", "needed to run it"),
+    "optional": ("Optional", "only if you want it"),
+    "provisional": ("Provisional", "may change before release"),
+    "built": ("Built in", "how the software works"),
+    "setup": ("Prototype setup", "the developer's own setup"),
+}
+ACTION_STYLES = ("primary", "secondary")
+# The kinds of block an app's page can carry after its opening, and each kind's own fields.
+BLOCK_COMMON = {"kind": True, "heading": True, "id": False, "title": False, "intro": False, "legend": False, "note": False}
+BLOCK_KINDS = {
+    "figure": {"image": True, "notes": False, "more": False},
+    "cards": {"items": True},
+    "steps": {"items": True},
+    "rows": {"items": True, "cols": False},
+    "flow": {"items": True},
+    "prose": {"paragraphs": True},
+}
+ID_RE = re.compile(r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$")
 PRIVACY_KEYS = {
     "updated": True, "intro": True, "collects": True, "uses": True, "shares": True,
     "keeps": True, "choices": True, "extra": False,
@@ -76,7 +110,7 @@ PREVIEW_NOTE = (
 )
 PREVIEW_EXAMPLES = (
     "Example App and Example Studio are made up, to show how an app and a business will look. "
-    "On the real site, the Apps or Businesses section stays hidden until it has an entry. "
+    "On the real site, the list of projects shows only real ones, and stays hidden until there is one. "
 )
 
 
@@ -205,18 +239,22 @@ def load_json(path):
         raise BuildError(f"{shown(path)}: not valid JSON (line {err.lineno}, column {err.colno}): {err.msg}.")
 
 
+SITE_KEYS = {
+    "name": True, "domain": True, "email": True, "description": True, "headline": True, "lede": True,
+    "projects_heading": True, "projects_intro": False, "copyright_since": True, "privacy_updated": True,
+    "terms_updated": True, "og_image_alt": True,
+}
+
+
 def load_site():
     data = load_json(SITE / "site.json")
     where = "site/site.json"
-    site = {k: need_str(data, k, where) for k in (
-        "name", "domain", "email", "description", "tagline", "lede", "apps_heading", "apps_intro",
-        "businesses_heading", "businesses_intro", "privacy_updated", "terms_updated", "og_image_alt")}
+    check_keys(data, SITE_KEYS, where)
+    site = {k: need_str(data, k, where, required=required) for k, required in SITE_KEYS.items()
+            if k != "copyright_since"}
     check_email(site["email"], where)
     if not re.match(r"^[a-z0-9-]+(\.[a-z0-9-]+)+$", site["domain"]):
         raise BuildError(f"{where}: 'domain' should look like palmulae.com, with no https:// or slashes.")
-    entry = data.get("entry")
-    check_keys(entry, {"headword": True, "label": True, "definition": True}, f"{where}, entry")
-    site["entry"] = {k: need_str(entry, k, f"{where}, entry") for k in ("headword", "label", "definition")}
     since = data.get("copyright_since")
     if not isinstance(since, int) or not 2000 <= since <= 2100:
         raise BuildError(f"{where}: 'copyright_since' should be a year, like 2026.")
@@ -245,12 +283,14 @@ def load_businesses(path, site):
         b["name"] = need_str(raw, "name", where)
         b["line"] = need_str(raw, "line", where)
         b["description"] = need_str(raw, "description", where, required=False) or b["line"]
-        colors = raw.get("colors")
-        if (not isinstance(colors, list) or len(colors) != 2 or colors[0] == colors[1]
-                or not all(c in PALETTE for c in colors)):
-            raise BuildError(f"{where}: 'colors' should be two different colors from {', '.join(PALETTE)}, "
-                             f"like [\"navy\", \"gold\"]: the blade, then its stripe.")
-        b["colors"] = colors
+        b["accent"] = need_str(raw, "accent", where)
+        if b["accent"] not in ACCENTS:
+            raise BuildError(f"{where}: 'accent' should be one of {', '.join(ACCENTS)}: its own color, "
+                             f"on its card and its page.")
+        b["icon"] = need_str(raw, "icon", where, required=False)
+        if b["icon"] is not None and (not IMAGE_PATH_RE.match(b["icon"]) or not b["icon"].endswith(".svg")):
+            raise BuildError(f"{where}: 'icon' should name a square SVG picture in site/static/assets/, like "
+                             f"\"{b['slug']}/icon.svg\". Without one, its card shows its first letter.")
         b["status"] = need_str(raw, "status", where)
         if b["status"] not in STATUSES:
             raise BuildError(f"{where}: 'status' should be \"live\", \"soon\" or \"wip\".")
@@ -292,9 +332,16 @@ def load_businesses(path, site):
             need_str(b["terms"], "updated", w)
             need_list_of_str(b["terms"], "paragraphs", w)
         b["image"] = load_image(raw.get("image"), f"{where}, image", b["slug"])
+        b["preview"] = load_image(raw.get("preview"), f"{where}, preview", b["slug"])
         b["features"] = load_features(raw.get("features"), where)
         b["sections"] = load_sections(raw.get("sections"), where)
         b["fine_print"] = need_str(raw, "fine_print", where, required=False)
+        b["headline"] = need_str(raw, "headline", where, required=False)
+        b["delivery"] = need_str(raw, "delivery", where, required=False)
+        b["status_label"] = need_str(raw, "status_label", where, required=False)
+        b["status_note"] = need_str(raw, "status_note", where, required=False)
+        b["blocks"] = load_blocks(raw.get("blocks"), where, b["slug"])
+        b["actions"] = load_actions(raw.get("actions"), where, {blk["id"] for blk in b["blocks"]})
         out.append(b)
     return out
 
@@ -305,7 +352,7 @@ def load_image(img, where, slug):
         return None
     check_keys(img, IMAGE_KEYS, where)
     out = {}
-    for key in ("src", "src_dark"):
+    for key in ("src", "src_dark", "src_small", "src_small_dark"):
         path = need_str(img, key, where, required=key == "src")
         if path is None:
             continue
@@ -313,14 +360,178 @@ def load_image(img, where, slug):
             raise BuildError(f"{where}: '{key}' should name a picture in site/static/assets/, like "
                              f"\"{slug}/screen.webp\" (one of {', '.join(IMAGE_TYPES)}).")
         out[key] = path
-    for key in ("width", "height"):
+    if "src_small_dark" in out and "src_small" not in out:
+        raise BuildError(f"{where}: 'src_small_dark' needs a 'src_small' beside it.")
+    sizes = ("width", "height") + (("small_width", "small_height") if "src_small" in out else ())
+    for key in sizes:
         value = img.get(key)
         if not isinstance(value, int) or isinstance(value, bool) or not 1 <= value <= 10000:
-            raise BuildError(f"{where}: '{key}' should be the picture's {key} in pixels, a whole number without quotes.")
+            raise BuildError(f"{where}: '{key}' should be the picture's {key.replace('_', ' ')} in pixels, "
+                             f"a whole number without quotes.")
         out[key] = value
+    for key in ("small_width", "small_height"):
+        if key in img and key not in out:
+            raise BuildError(f"{where}: '{key}' only goes with a 'src_small' picture.")
     out["alt"] = need_str(img, "alt", where)
     out["caption"] = need_str(img, "caption", where, required=False)
     return out
+
+
+def icon_names():
+    return sorted(p.stem[len("icon-"):] for p in PARTIALS.glob("icon-*.svg"))
+
+
+def load_tag(obj, where):
+    tag = need_str(obj, "tag", where, required=False)
+    if tag is not None and tag not in TAGS:
+        raise BuildError(f"{where}: 'tag' should be one of {', '.join(TAGS)}.")
+    return tag
+
+
+def load_list(value, where, key, shape):
+    if not isinstance(value, list) or not value:
+        raise BuildError(f"{where}: '{key}' should be a list of {shape}.")
+    return value
+
+
+def load_actions(items, where, ids):
+    """Buttons under an app's opening: [{"label", "href", "style"}]. An href is a web address, an email
+    link, or "#id" for one of the page's own blocks."""
+    if items is None:
+        return []
+    shape = '{"label": ..., "href": ..., "style": "primary" or "secondary"}'
+    out = []
+    for n, item in enumerate(load_list(items, where, "actions", shape), 1):
+        w = f"{where}, actions {n}"
+        check_keys(item, {"label": True, "href": True, "style": False}, w)
+        href = need_str(item, "href", w)
+        if href.startswith("#"):
+            if href[1:] not in ids:
+                known = ", ".join("#" + i for i in sorted(ids)) or "none yet"
+                raise BuildError(f"{w}: '{href}' should be the id of one of this page's blocks ({known}).")
+        else:
+            check_url(href, w)
+        style = need_str(item, "style", w, required=False) or "secondary"
+        if style not in ACTION_STYLES:
+            raise BuildError(f"{w}: 'style' should be \"primary\" or \"secondary\".")
+        out.append({"label": need_str(item, "label", w), "href": href, "style": style})
+    return out
+
+
+def load_blocks(items, where, slug):
+    """The blocks of an app's page, in order, each a titled section of one kind (see BLOCK_KINDS)."""
+    if items is None:
+        return []
+    out, ids = [], set()
+    for n, raw in enumerate(load_list(items, where, "blocks", '{"kind": ..., "heading": ...}'), 1):
+        w = f"{where}, blocks {n}"
+        if not isinstance(raw, dict):
+            raise BuildError(f"{w}: should be a set of fields in curly brackets.")
+        kind = raw.get("kind")
+        if kind not in BLOCK_KINDS:
+            raise BuildError(f"{w}: 'kind' should be one of {', '.join(BLOCK_KINDS)}.")
+        check_keys(raw, {**BLOCK_COMMON, **BLOCK_KINDS[kind]}, w)
+        blk = {"kind": kind, "heading": need_str(raw, "heading", w)}
+        blk["id"] = need_str(raw, "id", w, required=False) or anchor(slug, blk["heading"])
+        if not ID_RE.match(blk["id"]):
+            raise BuildError(f"{w}: 'id' should start with a letter and hold only lowercase letters, numbers and hyphens.")
+        if blk["id"] in ids:
+            raise BuildError(f"{w}: another block already has the id '{blk['id']}'.")
+        ids.add(blk["id"])
+        blk["title"] = need_str(raw, "title", w, required=False)
+        blk["intro"] = need_list_of_str(raw, "intro", w, required=False, allow_str=True)
+        blk["note"] = need_list_of_str(raw, "note", w, required=False, allow_str=True)
+        legend = raw.get("legend")
+        if legend is not None and (not isinstance(legend, list) or not legend or not all(t in TAGS for t in legend)):
+            raise BuildError(f"{w}: 'legend' should be a list of tags from {', '.join(TAGS)}.")
+        blk["legend"] = legend or []
+        loader = globals()["load_block_" + kind]
+        loader(raw, blk, w, slug)
+        out.append(blk)
+    return out
+
+
+def load_block_figure(raw, blk, w, slug):
+    blk["image"] = load_image(raw["image"], f"{w}, image", slug)
+    blk["notes"] = []
+    if raw.get("notes") is not None:
+        for k, note in enumerate(load_list(raw["notes"], w, "notes", '{"title": ..., "text": ..., "tag": ...}'), 1):
+            wn = f"{w}, notes {k}"
+            check_keys(note, {"title": True, "text": True, "tag": False}, wn)
+            blk["notes"].append({"title": need_str(note, "title", wn), "text": need_str(note, "text", wn),
+                                 "tag": load_tag(note, wn)})
+    blk["more"] = None
+    if raw.get("more") is not None:
+        wm = f"{w}, more"
+        check_keys(raw["more"], {"summary": True, "image": True}, wm)
+        blk["more"] = {"summary": need_str(raw["more"], "summary", wm),
+                       "image": load_image(raw["more"]["image"], f"{wm}, image", slug)}
+
+
+def load_block_cards(raw, blk, w, slug):
+    icons = icon_names()
+    blk["items"] = []
+    shape = '{"icon": ..., "title": ..., "text": ..., "tag": ..., "points": [...]}'
+    for k, item in enumerate(load_list(raw["items"], w, "items", shape), 1):
+        wi = f"{w}, item {k}"
+        check_keys(item, {"icon": False, "title": True, "text": False, "tag": False, "points": False}, wi)
+        icon = need_str(item, "icon", wi, required=False)
+        if icon is not None and icon not in icons:
+            raise BuildError(f"{wi}: 'icon' should be one of {', '.join(icons)}.")
+        points = []
+        if item.get("points") is not None:
+            for j, point in enumerate(load_list(item["points"], wi, "points", 'texts, or {"text": ..., "tag": ...}'), 1):
+                wp = f"{wi}, point {j}"
+                if isinstance(point, str):
+                    point = {"text": point}
+                check_keys(point, {"text": True, "tag": False}, wp)
+                points.append({"text": need_str(point, "text", wp), "tag": load_tag(point, wp)})
+        blk["items"].append({"icon": icon, "title": need_str(item, "title", wi),
+                             "text": need_str(item, "text", wi, required=False), "tag": load_tag(item, wi),
+                             "points": points})
+
+
+def load_block_steps(raw, blk, w, slug):
+    blk["items"] = load_titled(raw["items"], w)
+
+
+def load_block_rows(raw, blk, w, slug):
+    blk["items"] = load_titled(raw["items"], w)
+    cols = raw.get("cols", 1)
+    if cols not in (1, 2) or isinstance(cols, bool):
+        raise BuildError(f"{w}: 'cols' should be 1 or 2, without quotes.")
+    blk["cols"] = cols
+
+
+def load_titled(items, w):
+    out = []
+    for k, item in enumerate(load_list(items, w, "items", '{"title": ..., "text": ..., "tag": ...}'), 1):
+        wi = f"{w}, item {k}"
+        check_keys(item, {"title": True, "text": True, "tag": False}, wi)
+        out.append({"title": need_str(item, "title", wi), "text": need_str(item, "text", wi), "tag": load_tag(item, wi)})
+    return out
+
+
+def load_block_flow(raw, blk, w, slug):
+    """Boxes in a row with an arrow between each two: [{"title", "items": [...], "via", "style"}].
+    "via" is the label on the arrow that leads into a box; "style" is "home" or "optional"."""
+    blk["items"] = []
+    shape = '{"title": ..., "items": [...], "via": ..., "style": ...}'
+    for k, box in enumerate(load_list(raw["items"], w, "items", shape), 1):
+        wb = f"{w}, item {k}"
+        check_keys(box, {"title": True, "items": True, "via": False, "style": False}, wb)
+        via = need_str(box, "via", wb, required=False)
+        if k == 1 and via:
+            raise BuildError(f"{wb}: the first box has no arrow leading into it, so it takes no 'via'.")
+        style = need_str(box, "style", wb, required=False)
+        if style not in (None, "home", "optional"):
+            raise BuildError(f"{wb}: 'style' should be \"home\" or \"optional\".")
+        blk["items"].append({"title": need_str(box, "title", wb), "items": need_list_of_str(box, "items", wb),
+                             "via": via, "style": style})
+
+
+def load_block_prose(raw, blk, w, slug):
+    blk["paragraphs"] = need_list_of_str(raw, "paragraphs", w)
 
 
 def load_features(groups, where):
@@ -377,6 +588,29 @@ def anchor(*parts):
     return "-".join(re.sub(r"[^a-z0-9]+", "-", p.lower()).strip("-") for p in parts)
 
 
+def tag(key):
+    """A small label such as "Working now", or nothing."""
+    if not key:
+        return ""
+    return f'<span class="tag tag-{key}">{esc(TAGS[key][0])}</span>'
+
+
+def points(items, where):
+    """A card's short points, grouped under their tags in the order the tags first appear."""
+    if not items:
+        return ""
+    groups = {}
+    for p in items:
+        groups.setdefault(p["tag"], []).append(p["text"])
+    out = []
+    for key, texts in groups.items():
+        head = f'<p class="points-head">{tag(key)}</p>' if key else ""
+        lis = "".join(f"<li>{inline(t, where)}</li>" for t in texts)
+        out.append(f'<div class="points-group">{head}<ul>{lis}</ul></div>')
+    return f'<div class="points">{"".join(out)}</div>'
+
+
+
 # ---------------------------------------------------------------- building pages
 
 class Links:
@@ -412,12 +646,14 @@ class Builder:
         # Unlisted ones get their pages, but no card on the home page, no place in the sitemap,
         # and a noindex for search engines: reachable only by their address.
         self.listed = [b for b in self.businesses if not b["unlisted"]]
-        # The home page's sections, apps first, leaving out a kind with nothing listed: (id, entries).
-        self.sections = [(sid, [b for b in self.listed if b["kind"] == kind]) for kind, sid in KINDS.items()]
-        self.sections = [(sid, items) for sid, items in self.sections if items]
+        # The home page's list: apps first, then businesses, each in the order of businesses.json.
+        self.projects = sorted(self.listed, key=lambda b: KINDS.index(b["kind"]))
         self.templates = {p.stem: Template(p.read_text(encoding="utf-8")) for p in TEMPLATES.glob("*.html")}
         self.partials = {p.name: p.read_text(encoding="utf-8").strip() for p in PARTIALS.iterdir() if p.is_file()}
         self.pages = []  # (url path, file path, indexable)
+        # Browsers may keep the stylesheet for a while (GitHub Pages says 10 minutes), so its link carries a
+        # tag made from its contents: a changed stylesheet gets a new address and shows up at once.
+        self.css_version = hashlib.sha256((STATIC / "assets" / "site.css").read_bytes()).hexdigest()[:10]
         today = date.today().year
         since = self.site["copyright_since"]
         self.year = str(since) if today <= since else f"{since}–{today}"
@@ -438,8 +674,8 @@ class Builder:
         """Write one page. `here` is its address: "" for home, "privacy/" or "404.html"."""
         site, links = self.site, Links(here, self.preview, absolute)
         nav = []
-        for sid, _ in self.sections:
-            nav.append(f'<a href="{links.to("", sid)}">{esc(site[sid + "_heading"])}</a>')
+        if self.projects:
+            nav.append(f'<a href="{links.to("", "projects")}">Projects</a>')
         nav.append(f'<a href="{links.to("", "contact")}">Contact</a>')
         banner = ""
         if self.preview:
@@ -453,8 +689,8 @@ class Builder:
             title=esc(title), description=esc(description), robots=robots,
             canonical=esc(site["base"] + here), site_name=esc(site["name"]),
             og_image=esc(site["base"] + "assets/og-image.png"), og_image_alt=esc(site["og_image_alt"]),
-            root=links.root, head_extra=head_extra, svg_defs=self.partials["blade-defs.svg"],
-            banner=banner, home_link=links.to(""), nav_links="".join(nav), content=content.rstrip("\n"),
+            root=links.root, css_version=self.css_version, head_extra=head_extra,
+            galley=self.partials["galley.svg"], banner=banner, home_link=links.to(""), nav_links="".join(nav), content=content.rstrip("\n"),
             year=self.year, privacy_link=links.to("privacy/"), terms_link=links.to("terms/"),
         )
         file = here + "index.html" if here == "" or here.endswith("/") else here
@@ -469,30 +705,16 @@ class Builder:
     def home(self):
         site = self.site
         links = Links("", self.preview)
-        sections = []
-        for sid, items in self.sections:
-            cards = []
-            for b in items:
-                if b["status"] in STATUS_CHIPS:
-                    status = f'<span class="chip">{STATUS_CHIPS[b["status"]]}</span>'
-                else:
-                    where = urlsplit(b["url"]).netloc if b["url"] else f"{site['domain']}/{b['slug']}"
-                    status = f'<p class="where">{esc(where)}</p>'
-                cards.append(self.part(
-                    "card.html", c1=b["colors"][0], c2=b["colors"][1], blade=self.partials["blade.svg"],
-                    href=links.to(f"{b['slug']}/"), name=words(b["name"]), line=inline(b["line"], b["slug"]),
-                    status=status))
-            n = len(items)
-            sections.append(self.part(
-                "ventures.html", id=sid, heading=words(site[sid + "_heading"]),
-                intro=inline(site[sid + "_intro"], "site.json"), cols=2 if n in (1, 2, 4) else 3,
-                cards="\n".join(cards)))
-        ventures = "\n".join(sections)
+        projects = ""
+        if self.projects:
+            cards = [self.project_card(b, links) for b in self.projects]
+            intro = f'\n    <p>{inline(site["projects_intro"], "site.json")}</p>' if site["projects_intro"] else ""
+            projects = self.part(
+                "projects.html", heading=words(site["projects_heading"]), intro=intro,
+                layout="one" if len(cards) == 1 else "grid", cards="\n".join(cards))
         content = self.fill(
-            "home", mark=self.partials["mark.svg"], site_name=esc(site["name"]),
-            entry_headword=esc(site["entry"]["headword"]), entry_label=esc(site["entry"]["label"]),
-            entry_definition=esc(site["entry"]["definition"]), tagline=inline(site["tagline"], "site.json"),
-            lede=inline(site["lede"], "site.json"), ventures=ventures, email=esc(site["email"]))
+            "home", headline=inline(site["headline"], "site.json"), lede=inline(site["lede"], "site.json"),
+            projects=projects, email=esc(site["email"]))
         base = site["base"]
         data = {
             "@context": "https://schema.org",
@@ -506,6 +728,27 @@ class Builder:
         ld = json.dumps(data, ensure_ascii=False, indent=1).replace("</", "<\\/")
         self.page("", title=site["name"], description=site["description"], content=content,
                   head_extra=f'<script type="application/ld+json">\n{ld}\n</script>')
+
+    def app_icon(self, b, links, size):
+        """The app's own icon: its SVG picture, or its first letter on a tile of its color."""
+        if b["icon"]:
+            return (f'<img class="app-icon" src="{esc(links.root + "assets/" + b["icon"])}" width="{size}" '
+                    f'height="{size}" alt="">')
+        return f'<span class="app-icon app-icon-letter" aria-hidden="true">{esc(b["name"][:1].upper())}</span>'
+
+    def project_card(self, b, links):
+        if b["status"] in STATUS_CHIPS:
+            stage = STATUS_CHIPS[b["status"]]
+        else:
+            stage = urlsplit(b["url"]).netloc if b["url"] else f"{self.site['domain']}/{b['slug']}"
+        preview = ""
+        if b["preview"]:
+            preview = (f'      <div class="project-preview">\n'
+                       f'{self.picture(b["preview"], links, indent="        ", lazy=True)}\n      </div>')
+        return self.part(
+            "card.html", accent=b["accent"], icon=self.app_icon(b, links, 48), name=words(b["name"]),
+            line=inline(b["line"], b["slug"]), stage=esc(stage), href=links.to(f"{b['slug']}/"),
+            preview=preview)
 
     # Site-wide pages ------------------------------------------------------------------
 
@@ -531,13 +774,18 @@ class Builder:
             here = f"{b['slug']}/"
             links = Links(here, self.preview)
             w = b["slug"]
-            chip = f'  <span class="chip">{STATUS_CHIPS[b["status"]]}</span>' if b["status"] in STATUS_CHIPS else ""
+            head = self.biz_head(b, links)
             about = f'  <div class="prose biz-about">\n{paragraphs(b["about"], w)}\n  </div>' if b["about"] else ""
+            delivery = f'  <p class="biz-delivery">{inline(b["delivery"], w)}</p>' if b["delivery"] else ""
             figure = self.biz_figure(b, links)
+            blocks = "\n".join(self.biz_block(b, blk, links) for blk in b["blocks"])
             features = "\n".join(self.biz_features(b, group) for group in b["features"])
             secs = "\n".join(biz_section(b, sec) for sec in b["sections"])
             fine = f'  <p class="fine-print">{inline(b["fine_print"], w)}</p>' if b["fine_print"] else ""
             buttons = []
+            for a in b["actions"]:
+                href = a["href"] if a["href"].startswith("#") else esc(a["href"])
+                buttons.append(f'<a class="action action-{a["style"]}" href="{href}">{words(a["label"])}</a>')
             if b["url"]:
                 buttons.append(f'<a class="visit" href="{esc(b["url"])}">{esc(b["url_label"])}</a>')
             buttons += [f'<a href="{esc(url)}">{esc(label)}</a>' for label, url in b["links"]]
@@ -549,10 +797,10 @@ class Builder:
                 legal.append(f'<a href="{links.to(here + "terms/")}">Terms of service</a>')
             legal_row = f'  <p class="biz-legal">{"".join(legal)}</p>' if legal else ""
             content = self.fill(
-                "business", c1=b["colors"][0], c2=b["colors"][1], blade=self.partials["blade.svg"],
-                name=words(b["name"]), line=inline(b["line"], w), chip=chip, about=about, links=link_row,
-                figure=figure, features=features, sections=secs, legal=legal_row, contact=esc(b["contact"]),
-                fine_print=fine)
+                "business", accent=b["accent"], head=head,
+                chip=self.biz_status(b), about=about, delivery=delivery, links=link_row,
+                figure=figure, blocks=blocks, features=features, sections=secs, legal=legal_row,
+                contact=esc(b["contact"]), fine_print=fine)
             self.page(here, title=f"{b['name']} · {self.site['name']}", description=b["description"], content=content,
                       indexable=not b["unlisted"])
             if b["privacy"]:
@@ -560,20 +808,141 @@ class Builder:
             if b["terms"]:
                 self.business_terms(b)
 
-    def biz_figure(self, b, links):
-        """The page's picture, framed like a screen, with a dark-mode version when there is one."""
-        img = b["image"]
-        if not img:
+    def biz_head(self, b, links):
+        """The page's main heading: the app's icon and name, then its line. With a headline, the icon and
+        the name sit small above it, and the headline is the big line."""
+        w, icon = b["slug"], self.app_icon(b, links, 56)
+        if not b["headline"]:
+            return (f'  <h1 class="biz-name">{icon}<span>{words(b["name"])}</span></h1>\n'
+                    f'  <p class="biz-line">{inline(b["line"], w)}</p>')
+        return (f'  <h1 class="biz-title"><span class="biz-kicker">{icon}<span class="app-name">{words(b["name"])}</span>'
+                f'<span class="vh">: </span></span><span class="biz-headline">{inline(b["headline"], w)}</span></h1>')
+
+    def biz_status(self, b):
+        label = b["status_label"] or STATUS_CHIPS.get(b["status"])
+        if not label:
             return ""
-        src = links.root + "assets/" + img["src"]
-        dark = ""
+        chip = f'<span class="chip">{words(label)}</span>'
+        if not b["status_note"]:
+            return f"  {chip}"
+        return f'  <p class="biz-status">{chip}<span>{inline(b["status_note"], b["slug"])}</span></p>'
+
+    def biz_figure(self, b, links):
+        """The page's picture under its opening words, framed like a screen."""
+        return self.figure(b["image"], links, b["slug"], indent="  ") if b["image"] else ""
+
+    def figure(self, img, links, w, indent="  ", lazy=False, extra_class=""):
+        """A picture framed like a screen, with its caption."""
+        caption = f'\n{indent}  <figcaption>{inline(img["caption"], w)}</figcaption>' if img["caption"] else ""
+        cls = "shot" + (" " + extra_class if extra_class else "")
+        return (f'{indent}<figure class="{cls}">\n{self.picture(img, links, indent + "  ", lazy)}{caption}\n'
+                f'{indent}</figure>')
+
+    def picture(self, img, links, indent="", lazy=False):
+        """A picture with its dark-mode and small-screen versions, when there are any."""
+        root = links.root + "assets/"
+        sources = []
+        small = f"(max-width: {SMALL_SCREEN}px)"
+        if img.get("src_small"):
+            size = f' width="{img["small_width"]}" height="{img["small_height"]}"'
+            if img.get("src_small_dark"):
+                sources.append(f'<source srcset="{esc(root + img["src_small_dark"])}" '
+                               f'media="{small} and (prefers-color-scheme: dark)"{size}>')
+            sources.append(f'<source srcset="{esc(root + img["src_small"])}" media="{small}"{size}>')
         if img.get("src_dark"):
-            dark = (f'      <source srcset="{esc(links.root + "assets/" + img["src_dark"])}" '
-                    f'media="(prefers-color-scheme: dark)">\n')
-        caption = f'\n    <figcaption>{inline(img["caption"], b["slug"])}</figcaption>' if img["caption"] else ""
-        return (f'  <figure class="shot">\n    <picture>\n{dark}'
-                f'      <img src="{esc(src)}" width="{img["width"]}" height="{img["height"]}" '
-                f'alt="{words(img["alt"])}" decoding="async">\n    </picture>{caption}\n  </figure>')
+            sources.append(f'<source srcset="{esc(root + img["src_dark"])}" media="(prefers-color-scheme: dark)">')
+        pad = indent + "  "
+        sources = "".join(f"{pad}{s}\n" for s in sources)
+        loading = ' loading="lazy"' if lazy else ""
+        return (f'{indent}<picture>\n{sources}'
+                f'{pad}<img src="{esc(root + img["src"])}" width="{img["width"]}" height="{img["height"]}" '
+                f'alt="{words(img["alt"])}" decoding="async"{loading}>\n{indent}</picture>')
+
+    # The blocks of an app's page ---------------------------------------------------------
+
+    def biz_block(self, b, blk, links):
+        w, bid = b["slug"], blk["id"]
+        parts = [f'    <div class="section-head"><h2 id="{bid}-h">{words(blk["heading"])}</h2></div>']
+        if blk["title"]:
+            parts.append(f'    <p class="block-title">{inline(blk["title"], w)}</p>')
+        if blk["intro"]:
+            parts.append(f'    <div class="prose block-intro">\n{paragraphs(blk["intro"], w, "      ")}\n    </div>')
+        legend = ""
+        if blk["legend"]:
+            items = "".join(f'<span class="legend-item">{tag(t)}<span>{esc(TAGS[t][1])}</span></span>'
+                            for t in blk["legend"])
+            legend = f'    <p class="legend">{items}</p>'
+        # A picture comes first, so its legend sits under it, beside the notes that carry the tags.
+        if legend and blk["kind"] != "figure":
+            parts.append(legend)
+        parts.append(getattr(self, "block_" + blk["kind"])(b, blk, links, legend))
+        if blk["note"]:
+            parts.append(f'    <div class="prose block-note">\n{paragraphs(blk["note"], w, "      ")}\n    </div>')
+        return (f'  <section class="biz-section block block-{blk["kind"]}" id="{bid}" aria-labelledby="{bid}-h">\n'
+                + "\n".join(parts) + "\n  </section>")
+
+    def block_figure(self, b, blk, links, legend=""):
+        w = b["slug"]
+        out = [self.figure(blk["image"], links, w, indent="    ", extra_class="shot-wide")]
+        if legend:
+            out.append(legend)
+        if blk["notes"]:
+            notes = []
+            for n, note in enumerate(blk["notes"], 1):
+                notes.append(f'      <li class="note"><span class="note-n" aria-hidden="true">{n}</span>'
+                             f'<div><h3>{words(note["title"])}</h3><p>{inline(note["text"], w)}</p>'
+                             f'{tag(note["tag"])}</div></li>')
+            out.append('    <ol class="notes" role="list">\n' + "\n".join(notes) + "\n    </ol>")
+        if blk["more"]:
+            more = self.figure(blk["more"]["image"], links, w, indent="      ", lazy=True)
+            out.append(f'    <details class="more">\n      <summary>{words(blk["more"]["summary"])}</summary>\n'
+                       f'{more}\n    </details>')
+        return "\n".join(out)
+
+    def block_cards(self, b, blk, links, legend=""):
+        w = b["slug"]
+        cards = []
+        for item in blk["items"]:
+            icon = ""
+            if item["icon"]:
+                icon = f'<span class="feature-icon">{self.partials["icon-" + item["icon"] + ".svg"]}</span>'
+            top = f'<p class="feature-tag">{tag(item["tag"])}</p>' if item["tag"] else ""
+            text = f'<p>{inline(item["text"], w)}</p>' if item["text"] else ""
+            cards.append(f'      <li class="feature">{top}{icon}<h3>{words(item["title"])}</h3>{text}'
+                         f'{points(item["points"], w)}</li>')
+        cols = 2 if len(cards) in (1, 2, 4) else 3
+        return f'    <ul class="features" role="list" style="--cols: {cols}">\n' + "\n".join(cards) + "\n    </ul>"
+
+    def block_steps(self, b, blk, links, legend=""):
+        w = b["slug"]
+        steps = []
+        for n, item in enumerate(blk["items"], 1):
+            steps.append(f'      <li class="step"><span class="step-n" aria-hidden="true">{n}</span>'
+                         f'<h3>{words(item["title"])}</h3><p>{inline(item["text"], w)}</p>{tag(item["tag"])}</li>')
+        return f'    <ol class="steps" role="list" style="--n: {len(steps)}">\n' + "\n".join(steps) + "\n    </ol>"
+
+    def block_rows(self, b, blk, links, legend=""):
+        w = b["slug"]
+        rows = []
+        for item in blk["items"]:
+            rows.append(f'      <div class="row"><dt><span class="row-title">{words(item["title"])}</span>'
+                        f'{tag(item["tag"])}</dt><dd>{inline(item["text"], w)}</dd></div>')
+        return f'    <dl class="rows rows-{blk["cols"]}">\n' + "\n".join(rows) + "\n    </dl>"
+
+    def block_flow(self, b, blk, links, legend=""):
+        w = b["slug"]
+        out = []
+        for box in blk["items"]:
+            if box["via"]:
+                gate = " flow-arrow-gate" if box["style"] == "optional" else ""
+                out.append(f'      <p class="flow-arrow{gate}"><span>{inline(box["via"], w)}</span></p>')
+            style = f' flow-box-{box["style"]}' if box["style"] else ""
+            items = "".join(f"<li>{inline(i, w)}</li>" for i in box["items"])
+            out.append(f'      <div class="flow-box{style}"><h3>{words(box["title"])}</h3><ul>{items}</ul></div>')
+        return '    <div class="flow">\n' + "\n".join(out) + "\n    </div>"
+
+    def block_prose(self, b, blk, links, legend=""):
+        return f'    <div class="prose biz-prose">\n{paragraphs(blk["paragraphs"], b["slug"], "      ")}\n    </div>'
 
     def biz_features(self, b, group):
         hid = anchor(b["slug"], group["heading"])
