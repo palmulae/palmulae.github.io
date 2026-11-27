@@ -77,6 +77,8 @@ Add an entry to `site/businesses.json`. Only the first five fields are required.
 - `status` is `live`, or `soon` for a "Coming soon" card.
 - `url` is the business's own site or app, if it has one. Without one, its page here is its home.
 - `contact` defaults to the site's address.
+- `"unlisted": true` keeps it off the home page and out of the sitemap, and asks search engines not to list
+  its pages. They still work at their addresses: for a private tool that a sign-in provider needs pages for.
 - `privacy` and `terms` make `palmulae.com/harbor/privacy/` and `palmulae.com/harbor/terms/`,
   the addresses app stores and sign-in providers ask for. In any `collects`, `uses`, `shares` or
   `choices`, one piece of text makes a paragraph and a list makes bullet points.

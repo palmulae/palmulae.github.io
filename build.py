@@ -52,7 +52,7 @@ URL_CHARS_RE = re.compile(r"^[A-Za-z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+$")
 BUSINESS_KEYS = {
     "slug": True, "name": True, "line": True, "colors": True, "status": True,
     "about": False, "description": False, "url": False, "url_label": False,
-    "links": False, "contact": False, "privacy": False, "terms": False,
+    "links": False, "contact": False, "privacy": False, "terms": False, "unlisted": False,
 }
 PRIVACY_KEYS = {
     "updated": True, "intro": True, "collects": True, "uses": True, "shares": True,
@@ -261,6 +261,9 @@ def load_businesses(path, site):
             check_keys(link, {"label": True, "url": True}, w)
             b["links"].append((need_str(link, "label", w), check_url(need_str(link, "url", w), w)))
         b["contact"] = check_email(need_str(raw, "contact", where, required=False) or site["email"], f"{where}, contact")
+        b["unlisted"] = raw.get("unlisted", False)
+        if not isinstance(b["unlisted"], bool):
+            raise BuildError(f"{where}: 'unlisted' should be true or false, without quotes.")
         b["privacy"] = raw.get("privacy")
         if b["privacy"] is not None:
             w = f"{where}, privacy"
@@ -312,6 +315,9 @@ class Builder:
         self.site = load_site()
         source = SITE / "examples" / "businesses.json" if example else SITE / "businesses.json"
         self.businesses = load_businesses(source, self.site)
+        # Unlisted ones get their pages, but no card on the home page, no place in the sitemap,
+        # and a noindex for search engines: reachable only by their address.
+        self.listed = [b for b in self.businesses if not b["unlisted"]]
         self.templates = {p.stem: Template(p.read_text(encoding="utf-8")) for p in TEMPLATES.glob("*.html")}
         self.partials = {p.name: p.read_text(encoding="utf-8").strip() for p in PARTIALS.iterdir() if p.is_file()}
         self.pages = []  # (url path, file path, indexable)
@@ -335,7 +341,7 @@ class Builder:
         """Write one page. `here` is its address: "" for home, "privacy/" or "404.html"."""
         site, links = self.site, Links(here, self.preview, absolute)
         nav = []
-        if self.businesses:
+        if self.listed:
             nav.append(f'<a href="{links.to("", "ventures")}">{esc(site["ventures_heading"])}</a>')
         nav.append(f'<a href="{links.to("", "contact")}">Contact</a>')
         banner = ""
@@ -367,9 +373,9 @@ class Builder:
         site = self.site
         links = Links("", self.preview)
         ventures = ""
-        if self.businesses:
+        if self.listed:
             cards = []
-            for b in self.businesses:
+            for b in self.listed:
                 if b["status"] == "soon":
                     status = '<span class="chip">Coming soon</span>'
                 else:
@@ -379,7 +385,7 @@ class Builder:
                     "card.html", c1=b["colors"][0], c2=b["colors"][1], blade=self.partials["blade.svg"],
                     href=links.to(f"{b['slug']}/"), name=words(b["name"]), line=inline(b["line"], b["slug"]),
                     status=status))
-            n = len(self.businesses)
+            n = len(self.listed)
             ventures = self.part(
                 "ventures.html", heading=words(site["ventures_heading"]), intro=inline(site["ventures_intro"], "site.json"),
                 cols=2 if n in (1, 2, 4) else 3, cards="\n".join(cards))
@@ -443,7 +449,8 @@ class Builder:
                 "business", c1=b["colors"][0], c2=b["colors"][1], blade=self.partials["blade.svg"],
                 name=words(b["name"]), line=inline(b["line"], w), chip=chip, about=about, links=link_row,
                 legal=legal_row, contact=esc(b["contact"]))
-            self.page(here, title=f"{b['name']} · {self.site['name']}", description=b["description"], content=content)
+            self.page(here, title=f"{b['name']} · {self.site['name']}", description=b["description"], content=content,
+                      indexable=not b["unlisted"])
             if b["privacy"]:
                 self.business_privacy(b)
             if b["terms"]:
@@ -460,7 +467,8 @@ class Builder:
             uses=block(p["uses"], w), shares=block(p["shares"], w), keeps=inline(p["keeps"], w),
             choices=block(p["choices"], w), extra=extra, contact=esc(b["contact"]))
         self.page(here, title=f"Privacy policy · {b['name']}",
-                  description=f"How {b['name']} handles your information.", content=content)
+                  description=f"How {b['name']} handles your information.", content=content,
+                  indexable=not b["unlisted"])
 
     def business_terms(self, b):
         here = f"{b['slug']}/terms/"
@@ -472,7 +480,8 @@ class Builder:
             "business-terms", business_link=links.to(f"{b['slug']}/"), name=words(b["name"]),
             updated=esc(t["updated"]), paragraphs=body + ("\n" + more if more else ""), contact=esc(b["contact"]))
         self.page(here, title=f"Terms of service · {b['name']}",
-                  description=f"The terms for using {b['name']}.", content=content)
+                  description=f"The terms for using {b['name']}.", content=content,
+                  indexable=not b["unlisted"])
 
     # Files for search engines and GitHub ------------------------------------------------
 
